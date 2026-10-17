@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-100 text-slate-900">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academic Crypto Portal | Labs #5 & #6</title>
+  <!-- TailwindCSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .font-mono { font-family: 'Fira Code', monospace; }
+  </style>
+</head>
+<body class="min-h-full flex flex-col bg-slate-100 text-slate-900 selection:bg-indigo-500 selection:text-white">
+
+  <!-- ========================================================================= -->
+  <!-- Top Navigation Header (Clean White / Slate) -->
+  <!-- ========================================================================= -->
+  <header class="border-b border-slate-200 bg-white/95 backdrop-blur sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-blue-500 flex items-center justify-center shadow-md shadow-indigo-500/20">
+          <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            Academic Crypto Portal
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">Lecture #5 & Lab #5</span>
+          </h1>
+          <p class="text-xs text-slate-500">Cryptography in Application Security & Defensive Mechanisms</p>
+        </div>
+      </div>
+
+      <!-- User Card & Mode Controls -->
+      <div class="flex items-center gap-4">
+        
+        <!-- Auth Mode Indicator -->
+        <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-lg bg-slate-50 border border-slate-200 text-xs">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span class="text-slate-500">Mode:</span>
+          <span class="font-mono text-emerald-700 font-semibold">{{ auth_mode }}</span>
+        </div>
+
+        <!-- User Profile Card -->
+        <div class="flex items-center gap-3 bg-white pl-3 pr-2 py-1.5 rounded-xl border border-slate-200 shadow-sm">
+          <div class="flex flex-col text-right">
+            <span class="text-xs font-semibold text-slate-800" id="header-username">{{ user.username }}</span>
+            <!-- Discipline Badge -->
+            <div class="flex items-center justify-end gap-1 mt-0.5">
+              <span class="text-[10px] text-slate-400">Discipline:</span>
+              <span id="header-discipline-badge" class="inline-flex items-center px-1.5 py-0.2 text-[10px] font-medium rounded bg-blue-50 text-blue-700 border border-blue-200">
+                {{ user.discipline }}
+              </span>
+            </div>
+          </div>
+          
+          <button onclick="openProfileModal()" title="Edit Discipline (Lab #6 attribute demo)" class="p-1.5 text-slate-400 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 rounded-lg transition border border-slate-200">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- Navigation Tabs (Light & Clean) -->
+  <!-- ========================================================================= -->
+  <div class="border-b border-slate-200 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-2 overflow-x-auto py-2.5">
+      <!-- Tab 1 -->
+      <button onclick="switchTab('tab-symmetric')" id="btn-tab-symmetric" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 bg-indigo-600 text-white shadow-sm shadow-indigo-600/30">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+        1. AES-256-GCM Storage (AEAD)
+      </button>
+      <!-- Tab 2 -->
+      <button onclick="switchTab('tab-asymmetric')" id="btn-tab-asymmetric" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        2. Ed25519 Digital Signatures (EdDSA)
+      </button>
+      <!-- Tab 3: GnuPG Testing (Hidden - showing only interactive examples) -->
+      <button onclick="switchTab('tab-gnupg')" id="btn-tab-gnupg" class="hidden tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        3. GnuPG / OpenPGP Testing
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- Main Container -->
+  <!-- ========================================================================= -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+    <!-- ===================================================================== -->
+    <!-- TAB 1: SYMMETRIC ENCRYPTION (AES-256-GCM + PBKDF2) -->
+    <!-- ===================================================================== -->
+    <div id="tab-symmetric" class="tab-content space-y-6">
+      
+      <!-- Banner with Lecture 5 Mapping -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm border-l-4 border-l-indigo-600">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              Case 1: Confidentiality & Integrity Storage (AES-256-GCM + PBKDF2)
+            </h2>
+            <p class="text-sm text-slate-600 mt-1">
+              Implements <strong>Lecture #5 (Slide 4 & 12)</strong>: Authenticated Encryption with Associated Data (AEAD) and salted password hashing.
+            </p>
+          </div>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 self-start md:self-auto">
+            Lecture 5: AEAD (Data + Key + Nonce -> Tag)
+          </span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Left: Input & Controls -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm space-y-5">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+            <svg class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            1. Encryption Parameters & Input
+          </h3>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Secret Plaintext / Laboratory Notes</label>
+            <textarea id="sym-plaintext" rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="Enter sensitive laboratory results, API tokens, or secrets...">CONFIDENTIAL RESEARCH DATA: Quantum key distribution experimental results (Phase 4). Authorized access only.</textarea>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Master Password</label>
+              <input type="password" id="sym-password" value="SuperCryptoKey2026!#" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
+              <span class="text-[11px] text-slate-400 mt-1 block">PBKDF2-HMAC-SHA256 (200k iter)</span>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Associated Data (AAD - Optional)</label>
+              <input type="text" id="sym-aad" value="dept=cybersecurity;lab=5" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
+              <span class="text-[11px] text-slate-400 mt-1 block">Authenticated without encryption</span>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-3 pt-2">
+            <button onclick="encryptSymmetric()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              Encrypt with AES-256-GCM
+            </button>
+            <button onclick="tamperCiphertext()" id="btn-tamper" disabled class="bg-rose-600 hover:bg-rose-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-rose-600/20">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Simulate Attack (Tamper 1 Byte)
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Right: Cryptographic Breakdown & Decryption -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <svg class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              2. Cryptographic Output & Integrity
+            </h3>
+            <span id="sym-status" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-mono border border-slate-200">Idle</span>
+          </div>
+
+          <!-- Details Grid -->
+          <div class="space-y-3 text-xs font-mono">
+            <div>
+              <span class="text-slate-600 block font-sans font-medium mb-1">Random Salt (16 bytes / PBKDF2):</span>
+              <div id="out-salt" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 break-all select-all">None</div>
+            </div>
+            <div>
+              <span class="text-slate-600 block font-sans font-medium mb-1">Initialization Vector / Nonce (12 bytes):</span>
+              <div id="out-nonce" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-blue-700 break-all select-all font-semibold">None</div>
+            </div>
+            <div>
+              <span class="text-slate-600 block font-sans font-medium mb-1">Ciphertext (HEX):</span>
+              <div id="out-ct" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-indigo-800 break-all select-all max-h-24 overflow-y-auto">None</div>
+            </div>
+            <div>
+              <span class="text-slate-600 block font-sans font-medium mb-1">GCM Authentication Tag (16 bytes / GMAC Integrity):</span>
+              <div id="out-tag" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-emerald-700 break-all select-all font-semibold">None</div>
+            </div>
+          </div>
+
+          <!-- Decryption Action -->
+          <div class="pt-2 border-t border-slate-100 space-y-3">
+            <button onclick="decryptSymmetric()" id="btn-decrypt" disabled class="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+              Verify Tag & Decrypt (Original)
+            </button>
+
+            <!-- Decryption Alert Box -->
+            <div id="sym-decrypt-alert" class="hidden p-3.5 rounded-xl border text-xs"></div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 2: ASYMMETRIC & DIGITAL SIGNATURE (Ed25519) -->
+    <!-- ===================================================================== -->
+    <div id="tab-asymmetric" class="tab-content hidden space-y-6">
+      
+      <!-- Banner with Lecture 5 Mapping -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm border-l-4 border-l-blue-600">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              Case 2: Document Authenticity & Digital Signatures (Ed25519 + SHA-256)
+            </h2>
+            <p class="text-sm text-slate-600 mt-1">
+              Implements <strong>Lecture #5 (Slide 7 & 8)</strong>: Edwards-curve Digital Signature Algorithm (EdDSA). Built-in deterministic nonces, immune to ECDSA nonce-reuse attacks.
+            </p>
+          </div>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 self-start md:self-auto">
+            Lecture 5: Edwards25519 (EdDSA)
+          </span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Left: Key Generation & Signing -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm space-y-5">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+              1. Ed25519 Keypair & Document Signing
+            </h3>
+            <button onclick="generateKeys()" class="text-xs bg-slate-50 hover:bg-slate-100 text-blue-700 px-3 py-1.5 rounded-lg border border-slate-200 transition flex items-center gap-1 font-semibold">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              Generate New Keys
+            </button>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Document Content (To Sign)</label>
+            <textarea id="asym-doc" rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition" placeholder="Enter document content...">ACADEMIC REPORT APPROVAL:
+Student: Researcher Alice
+Topic: Defensive Cryptography & OIDC Architecture
+Grade: Excellent (Confirmed by Department of Cybernetics)</textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Ed25519 Private Key (PKCS#8 PEM)</label>
+            <textarea id="asym-privkey" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition" placeholder="Click 'Generate New Keys' above..."></textarea>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            <button onclick="signDocument()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-blue-600/20">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+              Create Digital Signature
+            </button>
+            <button onclick="tamperDocument()" id="btn-tamper-doc" disabled class="bg-rose-600 hover:bg-rose-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-rose-600/20">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              Simulate Forgery (Modify 1 Char)
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Verification & Signature Inspection -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <svg class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              2. Public Key & Signature Verification
+            </h3>
+            <span id="asym-status" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-mono border border-slate-200">No Signature</span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Ed25519 Public Key (SPKI PEM - 32 bytes)</label>
+            <textarea id="asym-pubkey" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono text-blue-900 font-semibold focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition" placeholder="Public key generated automatically..."></textarea>
+          </div>
+
+          <div class="space-y-3 text-xs font-mono">
+            <div>
+              <span class="text-slate-600 block font-sans font-medium mb-1">Document SHA-256 Digest:</span>
+              <div id="out-sha256" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 break-all select-all">None</div>
+            </div>
+            <div>
+              <span class="text-slate-600 block font-sans font-medium mb-1">Ed25519 Digital Signature (64 bytes / HEX):</span>
+              <div id="out-sig" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-emerald-700 font-semibold break-all select-all max-h-20 overflow-y-auto">None</div>
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-slate-100 space-y-3">
+            <button onclick="verifySignature()" id="btn-verify" disabled class="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              Verify Digital Signature
+            </button>
+
+            <!-- Verification Alert Box -->
+            <div id="asym-verify-alert" class="hidden p-3.5 rounded-xl border text-xs"></div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 3: GNUPG / OPENPGP TESTING GUIDE -->
+    <!-- ===================================================================== -->
+    <div id="tab-gnupg" class="tab-content hidden space-y-6">
+      
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm border-l-4 border-l-emerald-600">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+            <div>
+              <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                Open-Source Testing: GnuPG (Gpg4win / PowerShell) Practical Walkthrough
+              </h2>
+              <p class="text-sm text-slate-600 mt-1">
+                Covers <strong>Item 3 of Lab #5 requirements</strong>: testing open-source cryptographic software on <strong>Windows (PowerShell / CMD)</strong>. Demonstrates OpenPGP keypair generation, hybrid file encryption, and detached digital signature verification.
+              </p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 self-start md:self-auto font-mono">
+              Windows: gpg.exe (PowerShell)
+            </span>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          
+          <!-- Step 0: GnuPG on Windows (Already installed with Git!) -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="h-6 w-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center border border-emerald-200">0</span>
+              <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Step 0: GnuPG на Windows (Winget НЕ нужен!)</h4>
+            </div>
+            <p class="text-xs text-slate-600">На твоем компьютере GnuPG <strong>уже установлен</strong> вместе с Git for Windows! Выбери удобный вариант запуска:</p>
+            <div class="p-3.5 bg-slate-900 rounded-xl font-mono text-xs text-slate-200 overflow-x-auto border border-slate-800 space-y-2">
+              <div>
+                <span class="text-emerald-400 font-bold"># Вариант А: В PowerShell выполни один раз этот алиас:</span><br>
+                <code class="text-amber-300 font-bold">Set-Alias gpg "C:\Program Files\Git\usr\bin\gpg.exe"</code><br>
+                <span class="text-slate-400"># После этого команда gpg будет работать в окне PowerShell напрямую!</span>
+              </div>
+              <div class="pt-1 border-t border-slate-800">
+                <span class="text-cyan-400 font-bold"># Вариант Б: Открой "Git Bash" (Пуск -> Git Bash):</span><br>
+                <code class="text-slate-200">gpg --version</code><br>
+                <span class="text-slate-400"># В терминале Git Bash утилита gpg уже прописана в путях по умолчанию.</span>
+              </div>
+              <div class="pt-1 border-t border-slate-800">
+                <span class="text-slate-400"># Вариант В: Скачать официальный установщик с графическим интерфейсом Kleopatra:</span><br>
+                <span class="text-blue-300 font-bold">https://www.gpg4win.org</span> (прямой .exe файл)
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 1: Keypair Generation -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="h-6 w-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center">1</span>
+              <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Step 1: OpenPGP Keypair Generation (PowerShell / Git Bash)</h4>
+            </div>
+            <p class="text-xs text-slate-600">Launch interactive key generator in PowerShell or Git Bash:</p>
+            <div class="p-3.5 bg-slate-900 rounded-xl font-mono text-xs text-emerald-400 overflow-x-auto border border-slate-800">
+              PS C:\Users\Admin> gpg --full-generate-key<br>
+              <span class="text-slate-400"># Interactive choices:
+# 1. Please select what kind of key you want: (9) ECC (sign and encrypt)
+# 2. Please select which elliptic curve you want: (1) Curve 25519
+# 3. Key is valid for? (0) does not expire
+# 4. Real name: Lab Tester
+# 5. Email address: tester@crypto.edu
+# 6. Enter PIN/Passphrase in Windows popup window</span>
+            </div>
+          </div>
+
+          <!-- Step 2: File Creation & Hybrid Encryption -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="h-6 w-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center">2</span>
+              <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Step 2: Create Test File & Hybrid Encryption (PowerShell)</h4>
+            </div>
+            <p class="text-xs text-slate-600">Create document in PowerShell and encrypt it with the recipient's public key:</p>
+            <div class="p-3.5 bg-slate-900 rounded-xl font-mono text-xs text-cyan-300 overflow-x-auto border border-slate-800">
+              <span class="text-slate-400"># Create test file in current directory:</span><br>
+              Set-Content -Path .\research_doc.txt -Value "Confidential lab report data for Lab 5"<br><br>
+              <span class="text-slate-400"># Encrypt file (Generates .\research_doc.txt.gpg):</span><br>
+              gpg --encrypt --recipient "Lab Tester" .\research_doc.txt<br><br>
+              <span class="text-slate-400"># Decrypt test:</span><br>
+              gpg --decrypt .\research_doc.txt.gpg
+            </div>
+          </div>
+
+          <!-- Step 3: Detached Digital Signature -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="h-6 w-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center">3</span>
+              <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Step 3: Detached Digital Signature & Verification (PowerShell)</h4>
+            </div>
+            <p class="text-xs text-slate-600">Generate an ASCII-armored detached signature and verify file integrity:</p>
+            <div class="p-3.5 bg-slate-900 rounded-xl font-mono text-xs text-indigo-300 overflow-x-auto border border-slate-800">
+              <span class="text-slate-400"># Create detached signature (.asc file):</span><br>
+              gpg --detach-sign --armor .\research_doc.txt<br><br>
+              <span class="text-slate-400"># Verify signature against the original document:</span><br>
+              gpg --verify .\research_doc.txt.asc .\research_doc.txt<br><br>
+              <span class="text-emerald-400">PS C:\Users\Admin> gpg: Signature made 10/17/2026 04:50:00<br>
+gpg: using EDDSA key 7A8B9C0D1E2F3A4B5C6D7E8F9A0B1C2D3E4F5A6B<br>
+gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span>
+            </div>
+          </div>
+
+        </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- Edit Profile Modal (For testing discipline badge in Lab #5) -->
+  <!-- ========================================================================= -->
+  <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+    <div class="bg-white max-w-md w-full p-6 rounded-2xl border border-slate-200 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-bold text-slate-900">Edit User Attributes (Demo Mode)</h3>
+        <button onclick="closeProfileModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold">&times;</button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Username</label>
+          <input type="text" id="modal-username" value="{{ user.username }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Discipline Attribute (Lab #6 Preview)</label>
+          <input type="text" id="modal-discipline" value="{{ user.discipline }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-blue-700 font-semibold focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
+          <p class="text-[11px] text-slate-500 mt-1">Try: "Cybersecurity & Cryptography", "Computer Vision", or "Network Defense".</p>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+        <button onclick="closeProfileModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">Cancel</button>
+        <button onclick="saveProfile()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white transition shadow-sm shadow-indigo-600/20">Save & Update Badge</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- JavaScript Logic -->
+  <!-- ========================================================================= -->
+  <script>
+    // Tab switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm', 'shadow-indigo-600/30');
+        btn.classList.add('text-slate-600', 'hover:text-slate-900', 'hover:bg-slate-100');
+      });
+      document.getElementById(tabId).classList.remove('hidden');
+      const activeBtn = document.getElementById('btn-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-600', 'hover:text-slate-900', 'hover:bg-slate-100');
+        activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-sm', 'shadow-indigo-600/30');
+      }
+    }
+
+    // Modal controls
+    function openProfileModal() { document.getElementById('profile-modal').classList.remove('hidden'); }
+    function closeProfileModal() { document.getElementById('profile-modal').classList.add('hidden'); }
+    
+    async function saveProfile() {
+      const username = document.getElementById('modal-username').value;
+      const discipline = document.getElementById('modal-discipline').value;
+      const resp = await fetch('/api/auth/demo-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, discipline })
+      });
+      if (resp.ok) {
+        document.getElementById('header-username').innerText = username;
+        document.getElementById('header-discipline-badge').innerText = discipline;
+        closeProfileModal();
+      }
+    }
+
+    // Module 1: Symmetric Cryptography
+    let lastSymmetricPayload = null;
+
+    async function encryptSymmetric() {
+      const plaintext = document.getElementById('sym-plaintext').value;
+      const password = document.getElementById('sym-password').value;
+      const aad = document.getElementById('sym-aad').value;
+      
+      const resp = await fetch('/api/symmetric/encrypt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plaintext, password, associated_data: aad })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        lastSymmetricPayload = data.data;
+        document.getElementById('out-salt').innerText = data.data.salt_hex;
+        document.getElementById('out-nonce').innerText = data.data.nonce_hex;
+        document.getElementById('out-ct').innerText = data.data.ciphertext_hex;
+        document.getElementById('out-tag').innerText = data.data.tag_hex;
+        document.getElementById('sym-status').innerText = 'Encrypted (AES-GCM OK)';
+        document.getElementById('sym-status').className = 'text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-mono border border-emerald-200 font-semibold';
+        document.getElementById('btn-tamper').disabled = false;
+        document.getElementById('btn-decrypt').disabled = false;
+        hideAlert('sym-decrypt-alert');
+      }
+    }
+
+    async function decryptSymmetric() {
+      if (!lastSymmetricPayload) return;
+      const password = document.getElementById('sym-password').value;
+      const aad = document.getElementById('sym-aad').value;
+      
+      const resp = await fetch('/api/symmetric/decrypt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ciphertext_hex: document.getElementById('out-ct').innerText,
+          tag_hex: document.getElementById('out-tag').innerText,
+          nonce_hex: document.getElementById('out-nonce').innerText,
+          salt_hex: document.getElementById('out-salt').innerText,
+          password: password,
+          associated_data: aad
+        })
+      });
+      const res = await resp.json();
+      const alertBox = document.getElementById('sym-decrypt-alert');
+      alertBox.classList.remove('hidden');
+      
+      if (res.success) {
+        alertBox.className = 'p-3.5 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 text-xs shadow-sm';
+        alertBox.innerHTML = `<strong>SUCCESS: Integrity Tag Verified!</strong><br>Decrypted plaintext: <span class="font-mono text-emerald-800 font-bold">${res.decrypted_text}</span>`;
+      } else {
+        alertBox.className = 'p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 text-xs shadow-sm';
+        alertBox.innerHTML = `<strong>INTEGRITY VIOLATION DETECTED!</strong><br>${res.error}`;
+      }
+    }
+
+    async function tamperCiphertext() {
+      const ct = document.getElementById('out-ct').innerText;
+      const resp = await fetch('/api/symmetric/tamper', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ciphertext_hex: ct })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        document.getElementById('out-ct').innerText = data.tampered_ciphertext_hex;
+        document.getElementById('sym-status').innerText = 'TAMPERED (1 byte flipped)';
+        document.getElementById('sym-status').className = 'text-xs px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 font-mono border border-rose-200 font-semibold';
+        
+        // Auto attempt decryption to demonstrate failure
+        decryptSymmetric();
+      }
+    }
+
+    // Module 2: Asymmetric Cryptography & Digital Signature
+    async function generateKeys() {
+      const resp = await fetch('/api/asymmetric/generate-keys', { method: 'POST' });
+      const data = await resp.json();
+      if (data.success) {
+        document.getElementById('asym-privkey').value = data.data.private_key_pem;
+        document.getElementById('asym-pubkey').value = data.data.public_key_pem;
+      }
+    }
+
+    async function signDocument() {
+      const doc = document.getElementById('asym-doc').value;
+      const privKey = document.getElementById('asym-privkey').value;
+      if (!privKey) {
+        alert("Please generate or provide an Ed25519 Private Key first!");
+        return;
+      }
+      const resp = await fetch('/api/asymmetric/sign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ document_text: doc, private_key_pem: privKey })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        document.getElementById('out-sha256').innerText = data.data.sha256_hex;
+        document.getElementById('out-sig').innerText = data.data.signature_hex;
+        document.getElementById('asym-status').innerText = 'Signed (Ed25519 OK)';
+        document.getElementById('asym-status').className = 'text-xs px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-mono border border-blue-200 font-semibold';
+        document.getElementById('btn-tamper-doc').disabled = false;
+        document.getElementById('btn-verify').disabled = false;
+        hideAlert('asym-verify-alert');
+      } else {
+        alert("Signing Error: " + data.error);
+      }
+    }
+
+    async function verifySignature() {
+      const doc = document.getElementById('asym-doc').value;
+      const sig = document.getElementById('out-sig').innerText;
+      const pubKey = document.getElementById('asym-pubkey').value;
+      
+      const resp = await fetch('/api/asymmetric/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ document_text: doc, signature_hex: sig, public_key_pem: pubKey })
+      });
+      const data = await resp.json();
+      const alertBox = document.getElementById('asym-verify-alert');
+      alertBox.classList.remove('hidden');
+
+      if (data.success && data.data.is_valid) {
+        alertBox.className = 'p-3.5 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 text-xs shadow-sm';
+        alertBox.innerHTML = `<strong>SIGNATURE VALID!</strong><br>Document authenticity and author identity verified via Ed25519 public key.`;
+      } else {
+        alertBox.className = 'p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 text-xs shadow-sm';
+        alertBox.innerHTML = `<strong>VERIFICATION FAILED (FORGERY / CORRUPTION DETECTED)!</strong><br>${data.data ? data.data.error_message : data.error}`;
+      }
+    }
+
+    async function tamperDocument() {
+      const doc = document.getElementById('asym-doc').value;
+      const resp = await fetch('/api/asymmetric/tamper', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ document_text: doc })
+      });
+      const data = await resp.json();
+      if (data.success) {
+        document.getElementById('asym-doc').value = data.tampered_text;
+        document.getElementById('asym-status').innerText = 'TAMPERED (Document altered)';
+        document.getElementById('asym-status').className = 'text-xs px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 font-mono border border-rose-200 font-semibold';
+        
+        // Auto attempt verification to demonstrate immediate failure
+        verifySignature();
+      }
+    }
+
+    function hideAlert(id) { document.getElementById(id).classList.add('hidden'); }
+
+    // Init keys on load if empty
+    window.addEventListener('DOMContentLoaded', () => {
+      generateKeys();
+    });
+  </script>
+
+</body>
+</html>

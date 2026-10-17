@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # ============================================================================
+  # Lab #5 & Lab #6 Web Application
+  # ============================================================================
+  web:
+    build: .
+    container_name: crypto_portal_web
+    ports:
+      - "8000:8000"
+    environment:
+      - AUTH_MODE=${AUTH_MODE:-demo_lab5}
+      - SECRET_KEY=${SECRET_KEY:-dev_crypto_portal_super_secret_key}
+      - KEYCLOAK_SERVER_URL=http://keycloak:8080
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM:-master}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-crypto-portal}
+      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
+      - KEYCLOAK_REDIRECT_URI=http://localhost:8000/callback
+      - KEYCLOAK_SCOPE=openid discipline
+    volumes:
+      - .:/app
+    depends_on:
+      - keycloak
+    restart: unless-stopped
+
+  # ============================================================================
+  # Foundation for Lab #6: Keycloak Identity Provider (OIDC / OAuth 2.0)
+  # ============================================================================
+  # To activate for Lab #6:
+  # 1. Ensure docker compose starts keycloak: docker compose up -d
+  # 2. Open Keycloak Admin at http://localhost:8080 (admin / admin)
+  # 3. Create Realm, Client 'crypto-portal', and user attribute 'discipline'
+  # 4. Set AUTH_MODE=keycloak_lab6 in .env
+  # ============================================================================
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: crypto_portal_keycloak
+    command: start-dev
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
