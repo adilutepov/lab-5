@@ -78,19 +78,21 @@
   <!-- ========================================================================= -->
   <!-- Navigation Tabs (Light & Clean) -->
   <!-- ========================================================================= -->
+  <!-- Navigation Tabs (Clean & Intuitive) -->
+  <!-- ========================================================================= -->
   <div class="border-b border-slate-200 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-2 overflow-x-auto py-2.5">
       <!-- Tab 1 -->
       <button onclick="switchTab('tab-symmetric')" id="btn-tab-symmetric" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 bg-indigo-600 text-white shadow-sm shadow-indigo-600/30">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-        1. AES-256-GCM Storage (AEAD)
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        1. Безопасные заметки (Шифрование AES-256)
       </button>
       <!-- Tab 2 -->
       <button onclick="switchTab('tab-asymmetric')" id="btn-tab-asymmetric" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-        2. Ed25519 Digital Signatures (EdDSA)
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        2. Цифровая подпись (Защита от подделки Ed25519)
       </button>
-      <!-- Tab 3: GnuPG Testing (Hidden - showing only interactive examples) -->
+      <!-- Tab 3: GnuPG Testing (Hidden) -->
       <button onclick="switchTab('tab-gnupg')" id="btn-tab-gnupg" class="hidden tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
         3. GnuPG / OpenPGP Testing
@@ -108,103 +110,114 @@
     <!-- ===================================================================== -->
     <div id="tab-symmetric" class="tab-content space-y-6">
       
-      <!-- Banner with Lecture 5 Mapping -->
-      <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm border-l-4 border-l-indigo-600">
+      <!-- Friendly Banner -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm border-l-4 border-l-indigo-600">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
           <div>
-            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-              Case 1: Confidentiality & Integrity Storage (AES-256-GCM + PBKDF2)
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              Практический пример 1: Защищенный блокнот (Шифрование и Расшифровка заметок)
             </h2>
-            <p class="text-sm text-slate-600 mt-1">
-              Implements <strong>Lecture #5 (Slide 4 & 12)</strong>: Authenticated Encryption with Associated Data (AEAD) and salted password hashing.
+            <p class="text-xs text-slate-600 mt-1">
+              Шифрует секретные данные мастер-паролем (AES-256-GCM + PBKDF2). Обеспечивает <strong>конфиденциальность</strong> и <strong>защиту от подмены</strong> (целостность).
             </p>
           </div>
-          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 self-start md:self-auto">
-            Lecture 5: AEAD (Data + Key + Nonce -> Tag)
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 self-start md:self-auto font-mono">
+            Стандарт: AES-256-GCM (AEAD)
           </span>
         </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        <!-- Left: Input & Controls -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm space-y-5">
+        <!-- Left: Input & Encryption -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm space-y-4">
           <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
             <svg class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-            1. Encryption Parameters & Input
+            1. Ввод текста и пароля
           </h3>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Secret Plaintext / Laboratory Notes</label>
-            <textarea id="sym-plaintext" rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="Enter sensitive laboratory results, API tokens, or secrets...">CONFIDENTIAL RESEARCH DATA: Quantum key distribution experimental results (Phase 4). Authorized access only.</textarea>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Секретный текст / Личные заметки</label>
+            <textarea id="sym-plaintext" rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="Введите секретный текст или заметку...">Секретные данные исследования: Лабораторная работа №5. Пароли, токены и приватные ключи защищены шифрованием AES-256.</textarea>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Master Password</label>
-              <input type="password" id="sym-password" value="SuperCryptoKey2026!#" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
-              <span class="text-[11px] text-slate-400 mt-1 block">PBKDF2-HMAC-SHA256 (200k iter)</span>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Associated Data (AAD - Optional)</label>
-              <input type="text" id="sym-aad" value="dept=cybersecurity;lab=5" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
-              <span class="text-[11px] text-slate-400 mt-1 block">Authenticated without encryption</span>
-            </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Мастер-пароль для шифрования</label>
+            <input type="password" id="sym-password" value="SuperCryptoKey2026!#" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
+            <span class="text-[11px] text-slate-400 mt-1 block">Ключ генерируется через PBKDF2 (соль + 200 000 итераций)</span>
           </div>
 
-          <div class="flex flex-wrap gap-3 pt-2">
-            <button onclick="encryptSymmetric()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20">
+          <div class="hidden">
+            <input type="text" id="sym-aad" value="dept=cybersecurity;lab=5">
+          </div>
+
+          <div class="pt-2">
+            <button onclick="encryptSymmetric()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-              Encrypt with AES-256-GCM
-            </button>
-            <button onclick="tamperCiphertext()" id="btn-tamper" disabled class="bg-rose-600 hover:bg-rose-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-rose-600/20">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-              Simulate Attack (Tamper 1 Byte)
+              Зашифровать заметку
             </button>
           </div>
 
         </div>
 
-        <!-- Right: Cryptographic Breakdown & Decryption -->
+        <!-- Right: Output & Decryption -->
         <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-              <svg class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-              2. Cryptographic Output & Integrity
+              <svg class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              2. Результат и Расшифровка
             </h3>
-            <span id="sym-status" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-mono border border-slate-200">Idle</span>
+            <span id="sym-status" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-mono border border-slate-200">Ожидание</span>
           </div>
 
-          <!-- Details Grid -->
-          <div class="space-y-3 text-xs font-mono">
-            <div>
-              <span class="text-slate-600 block font-sans font-medium mb-1">Random Salt (16 bytes / PBKDF2):</span>
-              <div id="out-salt" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 break-all select-all">None</div>
-            </div>
-            <div>
-              <span class="text-slate-600 block font-sans font-medium mb-1">Initialization Vector / Nonce (12 bytes):</span>
-              <div id="out-nonce" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-blue-700 break-all select-all font-semibold">None</div>
-            </div>
-            <div>
-              <span class="text-slate-600 block font-sans font-medium mb-1">Ciphertext (HEX):</span>
-              <div id="out-ct" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-indigo-800 break-all select-all max-h-24 overflow-y-auto">None</div>
-            </div>
-            <div>
-              <span class="text-slate-600 block font-sans font-medium mb-1">GCM Authentication Tag (16 bytes / GMAC Integrity):</span>
-              <div id="out-tag" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-emerald-700 break-all select-all font-semibold">None</div>
+          <!-- Main Unified Result -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Зашифрованный файл / Пакет (Base64)</label>
+            <div id="out-full-payload" class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-indigo-900 font-mono text-xs break-all select-all max-h-24 overflow-y-auto">
+              Нажмите «Зашифровать заметку», чтобы получить зашифрованный результат...
             </div>
           </div>
 
-          <!-- Decryption Action -->
-          <div class="pt-2 border-t border-slate-100 space-y-3">
-            <button onclick="decryptSymmetric()" id="btn-decrypt" disabled class="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20">
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap gap-2 pt-1">
+            <button onclick="decryptSymmetric()" id="btn-decrypt" disabled class="flex-1 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
-              Verify Tag & Decrypt (Original)
+              Расшифровать обратно
             </button>
-
-            <!-- Decryption Alert Box -->
-            <div id="sym-decrypt-alert" class="hidden p-3.5 rounded-xl border text-xs"></div>
+            <button onclick="tamperCiphertext()" id="btn-tamper" disabled class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 disabled:opacity-40 disabled:cursor-not-allowed font-semibold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1.5 text-xs">
+              <svg class="w-4 h-4 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Испортить 1 байт (Тест атаки)
+            </button>
           </div>
+
+          <!-- Decryption Alert Box -->
+          <div id="sym-decrypt-alert" class="hidden p-3.5 rounded-xl border text-xs"></div>
+
+          <!-- Collapsible Technical Details (For Professor / Report) -->
+          <details class="mt-3 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+            <summary class="font-semibold text-slate-700 cursor-pointer flex items-center justify-between">
+              <span>🔍 Технические детали для отчета (Salt, Nonce, Tag)</span>
+              <span class="text-[10px] text-slate-400">Нажмите, чтобы развернуть</span>
+            </summary>
+            <div class="space-y-2 mt-3 pt-3 border-t border-slate-200 font-mono text-[11px]">
+              <div>
+                <span class="text-slate-500 block font-sans font-medium">Соль (Salt - 16 байт):</span>
+                <div id="out-salt" class="p-1.5 rounded bg-white border border-slate-200 text-slate-700 break-all select-all">None</div>
+              </div>
+              <div>
+                <span class="text-slate-500 block font-sans font-medium">Одноразовый вектор (Nonce - 12 байт):</span>
+                <div id="out-nonce" class="p-1.5 rounded bg-white border border-slate-200 text-blue-700 break-all select-all font-semibold">None</div>
+              </div>
+              <div>
+                <span class="text-slate-500 block font-sans font-medium">Сырой шифротекст (Ciphertext HEX):</span>
+                <div id="out-ct" class="p-1.5 rounded bg-white border border-slate-200 text-indigo-800 break-all select-all max-h-16 overflow-y-auto">None</div>
+              </div>
+              <div>
+                <span class="text-slate-500 block font-sans font-medium">Тег целостности GMAC (Tag - 16 байт):</span>
+                <div id="out-tag" class="p-1.5 rounded bg-white border border-slate-200 text-emerald-700 break-all select-all font-semibold">None</div>
+              </div>
+            </div>
+          </details>
 
         </div>
 
@@ -217,98 +230,106 @@
     <!-- ===================================================================== -->
     <div id="tab-asymmetric" class="tab-content hidden space-y-6">
       
-      <!-- Banner with Lecture 5 Mapping -->
-      <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm border-l-4 border-l-blue-600">
+      <!-- Friendly Banner -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm border-l-4 border-l-blue-600">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
           <div>
-            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-              Case 2: Document Authenticity & Digital Signatures (Ed25519 + SHA-256)
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              Практический пример 2: Электронная цифровая подпись (ЭЦП) документов
             </h2>
-            <p class="text-sm text-slate-600 mt-1">
-              Implements <strong>Lecture #5 (Slide 7 & 8)</strong>: Edwards-curve Digital Signature Algorithm (EdDSA). Built-in deterministic nonces, immune to ECDSA nonce-reuse attacks.
+            <p class="text-xs text-slate-600 mt-1">
+              Автор подписывает документ закрытым ключом (Ed25519 + SHA-256). Любой пользователь может проверить <strong>подлинность автора</strong> и убедиться, что в тексте <strong>нет изменений</strong>.
             </p>
           </div>
-          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 self-start md:self-auto">
-            Lecture 5: Edwards25519 (EdDSA)
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 self-start md:self-auto font-mono">
+            Стандарт: Ed25519 (EdDSA)
           </span>
         </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        <!-- Left: Key Generation & Signing -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm space-y-5">
+        <!-- Left: Document & Signing -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
               <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-              1. Ed25519 Keypair & Document Signing
+              1. Документ для подписания
             </h3>
-            <button onclick="generateKeys()" class="text-xs bg-slate-50 hover:bg-slate-100 text-blue-700 px-3 py-1.5 rounded-lg border border-slate-200 transition flex items-center gap-1 font-semibold">
-              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-              Generate New Keys
-            </button>
+            <span class="text-xs text-slate-400">Ключи создаются автоматически</span>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Document Content (To Sign)</label>
-            <textarea id="asym-doc" rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition" placeholder="Enter document content...">ACADEMIC REPORT APPROVAL:
-Student: Researcher Alice
-Topic: Defensive Cryptography & OIDC Architecture
-Grade: Excellent (Confirmed by Department of Cybernetics)</textarea>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Текст официального документа / отчета</label>
+            <textarea id="asym-doc" rows="5" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition" placeholder="Введите текст документа...">ПРИКАЗ О ПОДТВЕРЖДЕНИИ РЕЗУЛЬТАТОВ:
+Студент: Исследователь Алихан
+Тема: Применение современных криптографических механизмов (Лаб 5)
+Оценка: Отлично (Подтверждено кафедрой информационной безопасности)</textarea>
           </div>
 
-          <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Ed25519 Private Key (PKCS#8 PEM)</label>
-            <textarea id="asym-privkey" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition" placeholder="Click 'Generate New Keys' above..."></textarea>
-          </div>
-
-          <div class="flex flex-wrap gap-3">
+          <div class="flex flex-wrap gap-2 pt-1">
             <button onclick="signDocument()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-blue-600/20">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-              Create Digital Signature
+              Подписать документ (Ed25519)
             </button>
-            <button onclick="tamperDocument()" id="btn-tamper-doc" disabled class="bg-rose-600 hover:bg-rose-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-rose-600/20">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-              Simulate Forgery (Modify 1 Char)
+            <button onclick="tamperDocument()" id="btn-tamper-doc" disabled class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 disabled:opacity-40 disabled:cursor-not-allowed font-semibold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1.5 text-xs">
+              <svg class="w-4 h-4 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              Изменить 1 символ (Подделка)
             </button>
           </div>
+
+          <!-- Hidden technical inputs for automated key management -->
+          <div class="hidden">
+            <textarea id="asym-privkey"></textarea>
+            <textarea id="asym-pubkey"></textarea>
+          </div>
+
         </div>
 
-        <!-- Right: Verification & Signature Inspection -->
+        <!-- Right: Verification & Output -->
         <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
               <svg class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              2. Public Key & Signature Verification
+              2. Цифровая подпись и Проверка
             </h3>
-            <span id="asym-status" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-mono border border-slate-200">No Signature</span>
+            <span id="asym-status" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-mono border border-slate-200">Без подписи</span>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Ed25519 Public Key (SPKI PEM - 32 bytes)</label>
-            <textarea id="asym-pubkey" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-mono text-blue-900 font-semibold focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition" placeholder="Public key generated automatically..."></textarea>
-          </div>
-
-          <div class="space-y-3 text-xs font-mono">
-            <div>
-              <span class="text-slate-600 block font-sans font-medium mb-1">Document SHA-256 Digest:</span>
-              <div id="out-sha256" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 break-all select-all">None</div>
-            </div>
-            <div>
-              <span class="text-slate-600 block font-sans font-medium mb-1">Ed25519 Digital Signature (64 bytes / HEX):</span>
-              <div id="out-sig" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-emerald-700 font-semibold break-all select-all max-h-20 overflow-y-auto">None</div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Цифровая подпись документа (64 байта):</label>
+            <div id="out-sig" class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-emerald-800 font-mono text-xs font-semibold break-all select-all max-h-24 overflow-y-auto">
+              Нажмите «Подписать документ», чтобы сформировать цифровую подпись...
             </div>
           </div>
 
-          <div class="pt-2 border-t border-slate-100 space-y-3">
+          <div class="pt-1">
             <button onclick="verifySignature()" id="btn-verify" disabled class="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-              Verify Digital Signature
+              Проверить подлинность подписи
             </button>
-
-            <!-- Verification Alert Box -->
-            <div id="asym-verify-alert" class="hidden p-3.5 rounded-xl border text-xs"></div>
           </div>
+
+          <!-- Verification Alert Box -->
+          <div id="asym-verify-alert" class="hidden p-3.5 rounded-xl border text-xs"></div>
+
+          <!-- Collapsible Technical Details (For Professor / Report) -->
+          <details class="mt-3 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+            <summary class="font-semibold text-slate-700 cursor-pointer flex items-center justify-between">
+              <span>🔍 Технические детали для отчета (SHA-256, Ключи Ed25519)</span>
+              <span class="text-[10px] text-slate-400">Нажмите, чтобы развернуть</span>
+            </summary>
+            <div class="space-y-2 mt-3 pt-3 border-t border-slate-200 font-mono text-[11px]">
+              <div>
+                <span class="text-slate-500 block font-sans font-medium">Отпечаток документа (SHA-256):</span>
+                <div id="out-sha256" class="p-1.5 rounded bg-white border border-slate-200 text-slate-700 break-all select-all">None</div>
+              </div>
+              <div>
+                <span class="text-slate-500 block font-sans font-medium">Открытый ключ автора (Ed25519 Public Key):</span>
+                <div id="disp-pubkey" class="p-1.5 rounded bg-white border border-slate-200 text-blue-800 break-all select-all max-h-16 overflow-y-auto">Сгенерируется при подписании</div>
+              </div>
+            </div>
+          </details>
 
         </div>
 
@@ -507,11 +528,12 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
       const data = await resp.json();
       if (data.success) {
         lastSymmetricPayload = data.data;
+        document.getElementById('out-full-payload').innerText = data.data.full_payload_b64;
         document.getElementById('out-salt').innerText = data.data.salt_hex;
         document.getElementById('out-nonce').innerText = data.data.nonce_hex;
         document.getElementById('out-ct').innerText = data.data.ciphertext_hex;
         document.getElementById('out-tag').innerText = data.data.tag_hex;
-        document.getElementById('sym-status').innerText = 'Encrypted (AES-GCM OK)';
+        document.getElementById('sym-status').innerText = 'Зашифровано (AES-GCM)';
         document.getElementById('sym-status').className = 'text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-mono border border-emerald-200 font-semibold';
         document.getElementById('btn-tamper').disabled = false;
         document.getElementById('btn-decrypt').disabled = false;
@@ -542,10 +564,10 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
       
       if (res.success) {
         alertBox.className = 'p-3.5 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 text-xs shadow-sm';
-        alertBox.innerHTML = `<strong>SUCCESS: Integrity Tag Verified!</strong><br>Decrypted plaintext: <span class="font-mono text-emerald-800 font-bold">${res.decrypted_text}</span>`;
+        alertBox.innerHTML = `<strong>✓ УСПЕШНО: Целостность подтверждена!</strong><br>Расшифрованный текст заметки:<br><div class="mt-1.5 p-2.5 bg-white rounded-lg border border-emerald-300 font-sans text-emerald-950 font-medium">${res.decrypted_text}</div>`;
       } else {
         alertBox.className = 'p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 text-xs shadow-sm';
-        alertBox.innerHTML = `<strong>INTEGRITY VIOLATION DETECTED!</strong><br>${res.error}`;
+        alertBox.innerHTML = `<strong>✗ ВНИМАНИЕ: Нарушение целостности!</strong><br>Шифротекст был испорчен или подменен. Алгоритм AES-GCM заблокировал расшифровку (InvalidTag).`;
       }
     }
 
@@ -559,7 +581,8 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
       const data = await resp.json();
       if (data.success) {
         document.getElementById('out-ct').innerText = data.tampered_ciphertext_hex;
-        document.getElementById('sym-status').innerText = 'TAMPERED (1 byte flipped)';
+        document.getElementById('out-full-payload').innerText = 'ВНИМАНИЕ: Байт шифра поврежден (симуляция атаки)! Нажмите «Расшифровать обратно» для проверки...';
+        document.getElementById('sym-status').innerText = 'ПОВРЕЖДЕНО (1 байт)';
         document.getElementById('sym-status').className = 'text-xs px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 font-mono border border-rose-200 font-semibold';
         
         // Auto attempt decryption to demonstrate failure
@@ -574,16 +597,18 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
       if (data.success) {
         document.getElementById('asym-privkey').value = data.data.private_key_pem;
         document.getElementById('asym-pubkey').value = data.data.public_key_pem;
+        const disp = document.getElementById('disp-pubkey');
+        if (disp) disp.innerText = data.data.public_key_pem;
       }
     }
 
     async function signDocument() {
-      const doc = document.getElementById('asym-doc').value;
-      const privKey = document.getElementById('asym-privkey').value;
+      let privKey = document.getElementById('asym-privkey').value;
       if (!privKey) {
-        alert("Please generate or provide an Ed25519 Private Key first!");
-        return;
+        await generateKeys();
+        privKey = document.getElementById('asym-privkey').value;
       }
+      const doc = document.getElementById('asym-doc').value;
       const resp = await fetch('/api/asymmetric/sign', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -593,13 +618,13 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
       if (data.success) {
         document.getElementById('out-sha256').innerText = data.data.sha256_hex;
         document.getElementById('out-sig').innerText = data.data.signature_hex;
-        document.getElementById('asym-status').innerText = 'Signed (Ed25519 OK)';
+        document.getElementById('asym-status').innerText = 'Подписано (Ed25519)';
         document.getElementById('asym-status').className = 'text-xs px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-mono border border-blue-200 font-semibold';
         document.getElementById('btn-tamper-doc').disabled = false;
         document.getElementById('btn-verify').disabled = false;
         hideAlert('asym-verify-alert');
       } else {
-        alert("Signing Error: " + data.error);
+        alert("Ошибка подписания: " + data.error);
       }
     }
 
@@ -619,10 +644,10 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
 
       if (data.success && data.data.is_valid) {
         alertBox.className = 'p-3.5 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 text-xs shadow-sm';
-        alertBox.innerHTML = `<strong>SIGNATURE VALID!</strong><br>Document authenticity and author identity verified via Ed25519 public key.`;
+        alertBox.innerHTML = `<strong>✓ ПОДПИСЬ ПОДЛИННАЯ!</strong><br>Документ оригинальный, автор подтвержден открытым ключом Ed25519, изменений нет.`;
       } else {
         alertBox.className = 'p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 text-xs shadow-sm';
-        alertBox.innerHTML = `<strong>VERIFICATION FAILED (FORGERY / CORRUPTION DETECTED)!</strong><br>${data.data ? data.data.error_message : data.error}`;
+        alertBox.innerHTML = `<strong>✗ ПОДДЕЛКА ОБНАРУЖЕНА!</strong><br>Текст документа был изменен после подписания. Цифровая подпись отклонена (InvalidSignature)!`;
       }
     }
 
