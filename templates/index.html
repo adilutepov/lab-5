@@ -518,7 +518,8 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
     async function encryptSymmetric() {
       const plaintext = document.getElementById('sym-plaintext').value;
       const password = document.getElementById('sym-password').value;
-      const aad = document.getElementById('sym-aad').value;
+      const aadEl = document.getElementById('sym-aad');
+      const aad = aadEl ? aadEl.value : "";
       
       const resp = await fetch('/api/symmetric/encrypt', {
         method: 'POST',
@@ -528,32 +529,38 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
       const data = await resp.json();
       if (data.success) {
         lastSymmetricPayload = data.data;
-        document.getElementById('out-full-payload').innerText = data.data.full_payload_b64;
-        document.getElementById('out-salt').innerText = data.data.salt_hex;
-        document.getElementById('out-nonce').innerText = data.data.nonce_hex;
-        document.getElementById('out-ct').innerText = data.data.ciphertext_hex;
-        document.getElementById('out-tag').innerText = data.data.tag_hex;
+        document.getElementById('out-full-payload').textContent = data.data.full_payload_b64;
+        document.getElementById('out-salt').textContent = data.data.salt_hex;
+        document.getElementById('out-nonce').textContent = data.data.nonce_hex;
+        document.getElementById('out-ct').textContent = data.data.ciphertext_hex;
+        document.getElementById('out-tag').textContent = data.data.tag_hex;
         document.getElementById('sym-status').innerText = 'Зашифровано (AES-GCM)';
         document.getElementById('sym-status').className = 'text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-mono border border-emerald-200 font-semibold';
         document.getElementById('btn-tamper').disabled = false;
         document.getElementById('btn-decrypt').disabled = false;
         hideAlert('sym-decrypt-alert');
+      } else {
+        alert("Ошибка шифрования: " + data.error);
       }
     }
 
     async function decryptSymmetric() {
-      if (!lastSymmetricPayload) return;
+      if (!lastSymmetricPayload) {
+        alert("Сначала зашифруйте заметку!");
+        return;
+      }
       const password = document.getElementById('sym-password').value;
-      const aad = document.getElementById('sym-aad').value;
+      const aadEl = document.getElementById('sym-aad');
+      const aad = aadEl ? aadEl.value : "";
       
       const resp = await fetch('/api/symmetric/decrypt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ciphertext_hex: document.getElementById('out-ct').innerText,
-          tag_hex: document.getElementById('out-tag').innerText,
-          nonce_hex: document.getElementById('out-nonce').innerText,
-          salt_hex: document.getElementById('out-salt').innerText,
+          ciphertext_hex: lastSymmetricPayload.ciphertext_hex,
+          tag_hex: lastSymmetricPayload.tag_hex,
+          nonce_hex: lastSymmetricPayload.nonce_hex,
+          salt_hex: lastSymmetricPayload.salt_hex,
           password: password,
           associated_data: aad
         })
@@ -567,21 +574,22 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
         alertBox.innerHTML = `<strong>✓ УСПЕШНО: Целостность подтверждена!</strong><br>Расшифрованный текст заметки:<br><div class="mt-1.5 p-2.5 bg-white rounded-lg border border-emerald-300 font-sans text-emerald-950 font-medium">${res.decrypted_text}</div>`;
       } else {
         alertBox.className = 'p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 text-xs shadow-sm';
-        alertBox.innerHTML = `<strong>✗ ВНИМАНИЕ: Нарушение целостности!</strong><br>Шифротекст был испорчен или подменен. Алгоритм AES-GCM заблокировал расшифровку (InvalidTag).`;
+        alertBox.innerHTML = `<strong>✗ ВНИМАНИЕ: Нарушение целостности!</strong><br>${res.error}`;
       }
     }
 
     async function tamperCiphertext() {
-      const ct = document.getElementById('out-ct').innerText;
+      if (!lastSymmetricPayload) return;
       const resp = await fetch('/api/symmetric/tamper', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ciphertext_hex: ct })
+        body: JSON.stringify({ ciphertext_hex: lastSymmetricPayload.ciphertext_hex })
       });
       const data = await resp.json();
       if (data.success) {
-        document.getElementById('out-ct').innerText = data.tampered_ciphertext_hex;
-        document.getElementById('out-full-payload').innerText = 'ВНИМАНИЕ: Байт шифра поврежден (симуляция атаки)! Нажмите «Расшифровать обратно» для проверки...';
+        lastSymmetricPayload.ciphertext_hex = data.tampered_ciphertext_hex;
+        document.getElementById('out-ct').textContent = data.tampered_ciphertext_hex;
+        document.getElementById('out-full-payload').textContent = 'ВНИМАНИЕ: Байт шифра поврежден (симуляция атаки)! Нажмите «Расшифровать обратно» для проверки...';
         document.getElementById('sym-status').innerText = 'ПОВРЕЖДЕНО (1 байт)';
         document.getElementById('sym-status').className = 'text-xs px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 font-mono border border-rose-200 font-semibold';
         
@@ -591,14 +599,18 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
     }
 
     // Module 2: Asymmetric Cryptography & Digital Signature
+    let lastAsymKeypair = null;
+    let lastSignature = null;
+
     async function generateKeys() {
       const resp = await fetch('/api/asymmetric/generate-keys', { method: 'POST' });
       const data = await resp.json();
       if (data.success) {
+        lastAsymKeypair = data.data;
         document.getElementById('asym-privkey').value = data.data.private_key_pem;
         document.getElementById('asym-pubkey').value = data.data.public_key_pem;
         const disp = document.getElementById('disp-pubkey');
-        if (disp) disp.innerText = data.data.public_key_pem;
+        if (disp) disp.textContent = data.data.public_key_pem;
       }
     }
 
@@ -616,8 +628,9 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
       });
       const data = await resp.json();
       if (data.success) {
-        document.getElementById('out-sha256').innerText = data.data.sha256_hex;
-        document.getElementById('out-sig').innerText = data.data.signature_hex;
+        lastSignature = data.data.signature_hex;
+        document.getElementById('out-sha256').textContent = data.data.sha256_hex;
+        document.getElementById('out-sig').textContent = data.data.signature_hex;
         document.getElementById('asym-status').innerText = 'Подписано (Ed25519)';
         document.getElementById('asym-status').className = 'text-xs px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-mono border border-blue-200 font-semibold';
         document.getElementById('btn-tamper-doc').disabled = false;
@@ -630,8 +643,8 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
 
     async function verifySignature() {
       const doc = document.getElementById('asym-doc').value;
-      const sig = document.getElementById('out-sig').innerText;
-      const pubKey = document.getElementById('asym-pubkey').value;
+      const sig = lastSignature || document.getElementById('out-sig').textContent.trim();
+      const pubKey = (lastAsymKeypair ? lastAsymKeypair.public_key_pem : "") || document.getElementById('asym-pubkey').value;
       
       const resp = await fetch('/api/asymmetric/verify', {
         method: 'POST',
@@ -660,14 +673,15 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
       });
       const data = await resp.json();
       if (data.success) {
-        document.getElementById('asym-doc').value = data.tampered_text;
-        document.getElementById('asym-status').innerText = 'TAMPERED (Document altered)';
+        document.getElementById('asym-doc').value = data.tampered_text || data.tampered_document_text;
+        document.getElementById('asym-status').innerText = 'ТЕКСТ ИЗМЕНЕН!';
         document.getElementById('asym-status').className = 'text-xs px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 font-mono border border-rose-200 font-semibold';
         
-        // Auto attempt verification to demonstrate immediate failure
+        // Auto verify to demonstrate rejection
         verifySignature();
       }
     }
+
 
     function hideAlert(id) { document.getElementById(id).classList.add('hidden'); }
 
