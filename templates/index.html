@@ -85,12 +85,12 @@
       <!-- Tab 1 -->
       <button onclick="switchTab('tab-symmetric')" id="btn-tab-symmetric" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 bg-indigo-600 text-white shadow-sm shadow-indigo-600/30">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-        1. Безопасные заметки (Шифрование AES-256)
+        1. Encrypted Notes Vault (AES-256-GCM)
       </button>
       <!-- Tab 2 -->
       <button onclick="switchTab('tab-asymmetric')" id="btn-tab-asymmetric" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        2. Цифровая подпись (Защита от подделки Ed25519)
+        2. Digital Signature (Ed25519)
       </button>
       <!-- Tab 3: GnuPG Testing (Hidden) -->
       <button onclick="switchTab('tab-gnupg')" id="btn-tab-gnupg" class="hidden tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
@@ -115,14 +115,14 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
           <div>
             <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-              Практический пример 1: Защищенный блокнот (Шифрование и Расшифровка заметок)
+              Practical Case 1: Encrypted Notes Vault (AES-256-GCM Authenticated Encryption)
             </h2>
             <p class="text-xs text-slate-600 mt-1">
-              Шифрует секретные данные мастер-паролем (AES-256-GCM + PBKDF2). Обеспечивает <strong>конфиденциальность</strong> и <strong>защиту от подмены</strong> (целостность).
+              Protects sensitive records using a master password (AES-256-GCM with PBKDF2). Guarantees both <strong>confidentiality</strong> and <strong>tamper-resistance</strong> (cryptographic integrity).
             </p>
           </div>
           <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 self-start md:self-auto font-mono">
-            Стандарт: AES-256-GCM (AEAD)
+            Standard: AES-256-GCM (AEAD)
           </span>
         </div>
       </div>
@@ -133,23 +133,23 @@
         <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm space-y-4">
           <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
             <svg class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            1. Создать новую зашифрованную заметку
+            1. Create New Encrypted Note
           </h3>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Название заметки</label>
-            <input type="text" id="sym-title" value="Личные ключи доступа к серверам (Production)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 font-semibold focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="Например: Пароли, Пин-коды, Ключи API...">
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Note Title</label>
+            <input type="text" id="sym-title" value="Production Server Access Credentials" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 font-semibold focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="e.g. Production Passwords, API Secrets...">
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Секретный текст заметки</label>
-            <textarea id="sym-plaintext" rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="Введите текст, который нужно скрыть...">SSH Key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5 root@prod-node-01. Пароль от базы данных: SuperP@ssw0rd!2026</textarea>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Confidential Note Plaintext</label>
+            <textarea id="sym-plaintext" rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="Enter confidential text to encrypt...">SSH Key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5 root@prod-node-01. Database Password: SuperP@ssw0rd!2026</textarea>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Пароль для этой новой заметки</label>
-            <input type="password" id="sym-password" value="SuperCryptoKey2026!#" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="Придумайте пароль...">
-            <span class="text-[11px] text-slate-400 mt-1 block">Ключ генерируется через PBKDF2 (соль + 200 000 итераций)</span>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Password for this Note</label>
+            <input type="password" id="sym-password" value="SuperCryptoKey2026!#" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="Enter password...">
+            <span class="text-[11px] text-slate-400 mt-1 block">Key derived via PBKDF2-HMAC-SHA256 (16-byte salt + 200,000 iterations)</span>
           </div>
 
           <div class="hidden">
@@ -159,7 +159,7 @@
           <div class="pt-2">
             <button onclick="saveEncryptedNote()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
-              Зашифровать и сохранить в блокнот
+              Encrypt and Save to Vault
             </button>
           </div>
 
@@ -171,9 +171,9 @@
             <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
               <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
                 <svg class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                2. Зашифрованный сейф заметок
+                2. Encrypted Notes Vault
               </h3>
-              <span id="notes-count-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-mono border border-indigo-200 font-semibold">0 заметок</span>
+              <span id="notes-count-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-mono border border-indigo-200 font-semibold">0 notes</span>
             </div>
 
             <!-- List of Saved Encrypted Notes -->
@@ -185,24 +185,24 @@
           <!-- Collapsible Technical Details (For Professor / Report) -->
           <details class="mt-4 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs">
             <summary class="font-semibold text-slate-700 cursor-pointer flex items-center justify-between">
-              <span>🔍 Технические детали последней заметки (Salt, Nonce, Tag)</span>
-              <span class="text-[10px] text-slate-400">Нажмите, чтобы развернуть</span>
+              <span>Technical Payload Details (Salt, Nonce, Tag)</span>
+              <span class="text-[10px] text-slate-400">Click to expand</span>
             </summary>
             <div class="space-y-2 mt-3 pt-3 border-t border-slate-200 font-mono text-[11px]">
               <div>
-                <span class="text-slate-500 block font-sans font-medium">Соль (Salt - 16 байт):</span>
+                <span class="text-slate-500 block font-sans font-medium">Salt (PBKDF2 - 16 bytes):</span>
                 <div id="out-salt" class="p-1.5 rounded bg-white border border-slate-200 text-slate-700 break-all select-all">None</div>
               </div>
               <div>
-                <span class="text-slate-500 block font-sans font-medium">Одноразовый вектор (Nonce - 12 байт):</span>
+                <span class="text-slate-500 block font-sans font-medium">Initialization Vector / Nonce (12 bytes):</span>
                 <div id="out-nonce" class="p-1.5 rounded bg-white border border-slate-200 text-blue-700 break-all select-all font-semibold">None</div>
               </div>
               <div>
-                <span class="text-slate-500 block font-sans font-medium">Сырой шифротекст (Ciphertext HEX):</span>
+                <span class="text-slate-500 block font-sans font-medium">Raw Ciphertext (HEX):</span>
                 <div id="out-ct" class="p-1.5 rounded bg-white border border-slate-200 text-indigo-800 break-all select-all max-h-16 overflow-y-auto">None</div>
               </div>
               <div>
-                <span class="text-slate-500 block font-sans font-medium">Тег целостности GMAC (Tag - 16 байт):</span>
+                <span class="text-slate-500 block font-sans font-medium">Authentication Tag (GMAC - 16 bytes):</span>
                 <div id="out-tag" class="p-1.5 rounded bg-white border border-slate-200 text-emerald-700 break-all select-all font-semibold">None</div>
               </div>
             </div>
@@ -224,14 +224,14 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
           <div>
             <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-              Практический пример 2: Электронная цифровая подпись (ЭЦП) документов
+              Practical Case 2: Digital Signatures & Document Authenticity (Ed25519)
             </h2>
             <p class="text-xs text-slate-600 mt-1">
-              Автор подписывает документ закрытым ключом (Ed25519 + SHA-256). Любой пользователь может проверить <strong>подлинность автора</strong> и убедиться, что в тексте <strong>нет изменений</strong>.
+              The author signs a document with a private key (Ed25519 + SHA-256). Any verifier can validate <strong>author authenticity</strong> and prove the document has <strong>not been altered</strong>.
             </p>
           </div>
           <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 self-start md:self-auto font-mono">
-            Стандарт: Ed25519 (EdDSA)
+            Standard: Ed25519 (EdDSA)
           </span>
         </div>
       </div>
@@ -243,23 +243,23 @@
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
               <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
-              1. Документ для подписания
+              1. Document to Sign
             </h3>
-            <span class="text-xs text-slate-400">Ключи создаются автоматически</span>
+            <span class="text-xs text-slate-400">Keys generated automatically</span>
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Текст официального документа (можно свободно изменять вручную)</label>
-            <textarea id="asym-doc" rows="5" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition" placeholder="Введите текст документа...">ПРИКАЗ О ПОДТВЕРЖДЕНИИ РЕЗУЛЬТАТОВ:
-Студент: Исследователь Алихан
-Тема: Применение современных криптографических механизмов (Лаб 5)
-Оценка: Отлично (Подтверждено кафедрой информационной безопасности)</textarea>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Official Document Plaintext (Freely editable)</label>
+            <textarea id="asym-doc" rows="5" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition" placeholder="Enter document text...">ACADEMIC ORDER OF RESULTS CONFIRMATION:
+Student: Researcher Alikhan
+Subject: Implementation of Modern Cryptographic Mechanisms (Lab 5)
+Grade: Excellent (Validated by Dept. of Information Security)</textarea>
           </div>
 
           <div class="pt-1">
             <button onclick="signDocument()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-blue-600/20">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-              Подписать документ (Ed25519)
+              Sign Document (Ed25519)
             </button>
           </div>
 
@@ -276,23 +276,23 @@
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
               <svg class="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-              2. Цифровая подпись и Проверка
+              2. Digital Signature & Verification
             </h3>
-            <span id="asym-status" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-mono border border-slate-200">Без подписи</span>
+            <span id="asym-status" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-mono border border-slate-200">No Signature</span>
           </div>
 
           <div>
             <div class="flex items-center justify-between mb-1">
-              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Цифровая подпись документа (64 байта):</label>
-              <span class="text-[10px] text-slate-400 font-mono">Можно редактировать вручную</span>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Digital Signature (64 bytes / 128 HEX chars):</label>
+              <span class="text-[10px] text-slate-400 font-mono">Freely editable for testing</span>
             </div>
-            <textarea id="out-sig" rows="3" class="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-emerald-800 font-mono text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none transition resize-y select-all" placeholder="Нажмите «Подписать документ» или введите/измените подпись вручную..."></textarea>
+            <textarea id="out-sig" rows="3" class="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-emerald-800 font-mono text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none transition resize-y select-all" placeholder="Click 'Sign Document' or enter/tamper with a signature manually..."></textarea>
           </div>
 
           <div class="pt-1">
             <button onclick="verifySignature()" id="btn-verify" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-              Проверить подлинность подписи
+              Verify Document Signature
             </button>
           </div>
 
@@ -302,30 +302,30 @@
           <!-- Collapsible Technical Details (For Professor / Report) -->
           <details class="mt-3 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs">
             <summary class="font-semibold text-slate-700 cursor-pointer flex items-center justify-between">
-              <span>🔍 Технические детали для отчета (Ключи Ed25519, SHA-256)</span>
-              <span class="text-[10px] text-slate-400">Нажмите, чтобы развернуть</span>
+              <span>Technical Details for Report (Ed25519 Keys, SHA-256)</span>
+              <span class="text-[10px] text-slate-400">Click to expand</span>
             </summary>
             <div class="space-y-3 mt-3 pt-3 border-t border-slate-200 font-mono text-[11px]">
               <div>
-                <span class="text-rose-600 block font-sans font-medium flex items-center gap-1 mb-1">
-                  <span>🔑</span> Закрытый секретный ключ автора (Ed25519 Private Key):
+                <span class="text-rose-600 block font-sans font-medium mb-1">
+                  Author Private Key (Ed25519 Private Key PEM):
                 </span>
-                <div id="disp-privkey" class="p-2 rounded bg-white border border-rose-200 text-rose-900 break-all select-all max-h-24 overflow-y-auto text-[10px]">Генерируется...</div>
-                <span class="text-[10px] text-slate-400 font-sans mt-0.5 block">Секретный ключ, которым директор/автор подписывает документ (хранится в тайне)</span>
+                <div id="disp-privkey" class="p-2 rounded bg-white border border-rose-200 text-rose-900 break-all select-all max-h-24 overflow-y-auto text-[10px]">Generated upon signing...</div>
+                <span class="text-[10px] text-slate-400 font-sans mt-0.5 block">Confidential private key used to sign documents (never shared).</span>
               </div>
               <div>
-                <span class="text-blue-600 block font-sans font-medium flex items-center gap-1 mb-1">
-                  <span>🌐</span> Открытый публичный ключ автора (Ed25519 Public Key):
+                <span class="text-blue-600 block font-sans font-medium mb-1">
+                  Author Public Key (Ed25519 Public Key PEM):
                 </span>
-                <div id="disp-pubkey" class="p-2 rounded bg-white border border-blue-200 text-blue-900 break-all select-all max-h-24 overflow-y-auto text-[10px]">Генерируется...</div>
-                <span class="text-[10px] text-slate-400 font-sans mt-0.5 block">Публичный ключ, доступный любому проверяющему для валидации подлинности</span>
+                <div id="disp-pubkey" class="p-2 rounded bg-white border border-blue-200 text-blue-900 break-all select-all max-h-24 overflow-y-auto text-[10px]">Generated upon signing...</div>
+                <span class="text-[10px] text-slate-400 font-sans mt-0.5 block">Public key distributed to all verifiers to check document authenticity.</span>
               </div>
               <div>
-                <span class="text-slate-600 block font-sans font-medium flex items-center gap-1 mb-1">
-                  <span>#️⃣</span> Отпечаток документа (SHA-256 хеш):
+                <span class="text-slate-600 block font-sans font-medium mb-1">
+                  Document Fingerprint (SHA-256 Hash Digest):
                 </span>
-                <div id="out-sha256" class="p-2 rounded bg-white border border-slate-200 text-slate-800 break-all select-all text-[11px] font-semibold">Сгенерируется при подписании</div>
-                <span class="text-[10px] text-slate-400 font-sans mt-0.5 block">Фиксированный 32-байтный отпечаток текста. Если изменить хоть букву в документе — этот хеш изменится</span>
+                <div id="out-sha256" class="p-2 rounded bg-white border border-slate-200 text-slate-800 break-all select-all text-[11px] font-semibold">Generated upon signing...</div>
+                <span class="text-[10px] text-slate-400 font-sans mt-0.5 block">Fixed 32-byte cryptographic hash digest. Changing any character alters this hash completely.</span>
               </div>
             </div>
           </details>
@@ -363,23 +363,23 @@
           <div class="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-sm space-y-2">
             <div class="flex items-center gap-2">
               <span class="h-6 w-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center border border-emerald-200">0</span>
-              <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Step 0: GnuPG на Windows (Winget НЕ нужен!)</h4>
+              <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Step 0: GnuPG on Windows (Pre-installed with Git)</h4>
             </div>
-            <p class="text-xs text-slate-600">На твоем компьютере GnuPG <strong>уже установлен</strong> вместе с Git for Windows! Выбери удобный вариант запуска:</p>
+            <p class="text-xs text-slate-600">On Windows, GnuPG is <strong>already bundled</strong> with Git for Windows. Choose your preferred terminal execution method:</p>
             <div class="p-3.5 bg-slate-900 rounded-xl font-mono text-xs text-slate-200 overflow-x-auto border border-slate-800 space-y-2">
               <div>
-                <span class="text-emerald-400 font-bold"># Вариант А: В PowerShell выполни один раз этот алиас:</span><br>
+                <span class="text-emerald-400 font-bold"># Option A: In PowerShell, set this alias once:</span><br>
                 <code class="text-amber-300 font-bold">Set-Alias gpg "C:\Program Files\Git\usr\bin\gpg.exe"</code><br>
-                <span class="text-slate-400"># После этого команда gpg будет работать в окне PowerShell напрямую!</span>
+                <span class="text-slate-400"># After this, the gpg command is directly accessible in your PowerShell session.</span>
               </div>
               <div class="pt-1 border-t border-slate-800">
-                <span class="text-cyan-400 font-bold"># Вариант Б: Открой "Git Bash" (Пуск -> Git Bash):</span><br>
+                <span class="text-cyan-400 font-bold"># Option B: Open "Git Bash" (Start Menu -> Git Bash):</span><br>
                 <code class="text-slate-200">gpg --version</code><br>
-                <span class="text-slate-400"># В терминале Git Bash утилита gpg уже прописана в путях по умолчанию.</span>
+                <span class="text-slate-400"># In Git Bash terminal, the gpg binary is included in the default system PATH.</span>
               </div>
               <div class="pt-1 border-t border-slate-800">
-                <span class="text-slate-400"># Вариант В: Скачать официальный установщик с графическим интерфейсом Kleopatra:</span><br>
-                <span class="text-blue-300 font-bold">https://www.gpg4win.org</span> (прямой .exe файл)
+                <span class="text-slate-400"># Option C: Download the official installer with Kleopatra GUI:</span><br>
+                <span class="text-blue-300 font-bold">https://www.gpg4win.org</span> (standalone Windows package)
               </div>
             </div>
           </div>
@@ -480,24 +480,25 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
     <div class="bg-white max-w-sm w-full p-6 rounded-2xl border border-slate-200 shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-2">
         <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-          <span>🔒</span> Введите пароль заметки
+          <svg class="w-4 h-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          Enter Note Password
         </h3>
         <button onclick="closeDecryptModal()" class="text-slate-400 hover:text-slate-700 text-lg font-bold">&times;</button>
       </div>
 
       <div>
-        <p class="text-xs text-slate-500 mb-1">Заметка:</p>
+        <p class="text-xs text-slate-500 mb-1">Target Note:</p>
         <span id="decrypt-modal-note-title" class="text-xs font-bold text-indigo-700 block mb-3 break-words bg-indigo-50 p-2 rounded-lg border border-indigo-100"></span>
         
-        <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Пароль для расшифровки</label>
-        <input type="password" id="decrypt-modal-password" onkeydown="if(event.key==='Enter') submitDecryptModal()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="Введите пароль заметки...">
+        <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Password for Decryption</label>
+        <input type="password" id="decrypt-modal-password" onkeydown="if(event.key==='Enter') submitDecryptModal()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="Enter password for this note...">
       </div>
 
       <div id="decrypt-modal-error" class="hidden p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium"></div>
 
       <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
-        <button onclick="closeDecryptModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">Отмена</button>
-        <button onclick="submitDecryptModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-sm shadow-emerald-600/20">Расшифровать</button>
+        <button onclick="closeDecryptModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">Cancel</button>
+        <button onclick="submitDecryptModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-sm shadow-emerald-600/20">Decrypt Note</button>
       </div>
     </div>
   </div>
@@ -545,18 +546,18 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
     let lastInspectedPayload = null;
 
     async function saveEncryptedNote() {
-      const title = document.getElementById('sym-title').value.trim() || 'Без названия';
+      const title = document.getElementById('sym-title').value.trim() || 'Untitled Note';
       const plaintext = document.getElementById('sym-plaintext').value;
       const password = document.getElementById('sym-password').value;
       const aadEl = document.getElementById('sym-aad');
       const aad = aadEl ? aadEl.value : "";
       
       if (!plaintext) {
-        alert("Введите текст заметки!");
+        alert("Please enter note text!");
         return;
       }
       if (!password) {
-        alert("Введите мастер-пароль!");
+        alert("Please enter master password!");
         return;
       }
 
@@ -581,10 +582,9 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
         encryptedNotes.unshift(newNote);
         inspectNote(newNote.id);
         renderNotes();
-        // Clear input for realistic experience
         document.getElementById('sym-plaintext').value = "";
       } else {
-        alert("Ошибка шифрования: " + data.error);
+        alert("Encryption error: " + data.error);
       }
     }
 
@@ -625,7 +625,7 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
 
       const password = document.getElementById('decrypt-modal-password').value;
       if (!password) {
-        showDecryptModalError("Введите пароль заметки!");
+        showDecryptModalError("Please enter note password!");
         return;
       }
 
@@ -652,13 +652,13 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
           closeDecryptModal();
           renderNotes();
         } else {
-          const errMsg = data.error || "Неверный пароль или данные были повреждены!";
+          const errMsg = data.error || "Invalid password or corrupted ciphertext!";
           showDecryptModalError(errMsg);
           note.error = errMsg;
           renderNotes();
         }
       } catch (err) {
-        showDecryptModalError("Сетевая ошибка: " + err.message);
+        showDecryptModalError("Network error: " + err.message);
       }
     }
 
@@ -703,13 +703,13 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
     function renderNotes() {
       const container = document.getElementById('notes-list');
       const badge = document.getElementById('notes-count-badge');
-      if (badge) badge.innerText = `${encryptedNotes.length} заметок`;
+      if (badge) badge.innerText = `${encryptedNotes.length} notes`;
 
       if (encryptedNotes.length === 0) {
         container.innerHTML = `
           <div class="text-center py-8 text-slate-400 text-xs">
             <svg class="w-8 h-8 mx-auto mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-            Сейф пуст. Создайте и зашифруйте первую заметку слева!
+            Vault is empty. Create and encrypt your first note on the left!
           </div>
         `;
         return;
@@ -719,20 +719,20 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
         <div class="p-3.5 rounded-xl border ${n.error ? 'border-rose-300 bg-rose-50/40' : (n.unlocked ? 'border-emerald-300 bg-emerald-50/30' : 'border-slate-200 bg-slate-50/70')} space-y-2.5 transition">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-              ${n.unlocked ? '<span class="text-emerald-600">🔓</span>' : '<span class="text-indigo-600">🔒</span>'}
+              ${n.unlocked ? '<span class="text-emerald-700 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 border border-emerald-300">OPEN</span>' : '<span class="text-indigo-700 font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 border border-indigo-300">LOCKED</span>'}
               ${escapeHtml(n.title)}
             </span>
             <div class="flex items-center gap-2">
               <span class="text-[10px] text-slate-400 font-mono">${n.createdAt}</span>
-              <button onclick="deleteNote(${n.id})" title="Удалить заметку" class="text-slate-300 hover:text-rose-600 text-xs font-bold transition">&times;</button>
+              <button onclick="deleteNote(${n.id})" title="Delete note" class="text-slate-300 hover:text-rose-600 text-xs font-bold transition">&times;</button>
             </div>
           </div>
 
           <!-- Single In-Place Textarea (Shows Ciphertext or Plaintext directly in this same box) -->
           <div class="space-y-1">
             <div class="flex items-center justify-between text-[11px] text-slate-500 font-medium">
-              <span>${n.unlocked ? '📄 Исходный текст заметки:' : '🔐 Зашифрованный блок (можно изменять текст вручную):'}</span>
-              <span class="text-[10px] text-slate-400 font-mono">${n.unlocked ? 'Расшифровано' : 'Base64 GCM'}</span>
+              <span>${n.unlocked ? 'Decrypted Original Plaintext:' : 'Encrypted Ciphertext Package (Freely editable):'}</span>
+              <span class="text-[10px] text-slate-400 font-mono">${n.unlocked ? 'Decrypted' : 'Base64 AEAD'}</span>
             </div>
             <textarea
               id="note-text-${n.id}"
@@ -740,7 +740,7 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
               ${n.unlocked ? 'readonly' : ''}
               oninput="updateNoteCipher(${n.id}, this.value)"
               class="w-full text-xs font-mono p-2.5 rounded-xl border ${n.unlocked ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950 font-sans font-medium' : 'bg-white border-slate-200 text-indigo-900 focus:ring-2 focus:ring-indigo-400'} focus:outline-none transition resize-y select-all"
-              placeholder="Зашифрованная строка...">${escapeHtml(n.unlocked ? n.decryptedText : (n.current_cipher || n.full_payload_b64))}</textarea>
+              placeholder="Base64 ciphertext...">${escapeHtml(n.unlocked ? n.decryptedText : (n.current_cipher || n.full_payload_b64))}</textarea>
           </div>
 
           <!-- Action Button: Opens Password Modal or Locks back -->
@@ -748,12 +748,12 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
             ${n.unlocked ? `
               <button onclick="lockNote(${n.id})" class="w-full text-xs py-2 px-3 rounded-xl bg-slate-700 hover:bg-slate-800 text-white font-semibold transition flex items-center justify-center gap-1.5 shadow-sm">
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                Заблокировать / Скрыть текст
+                Lock / Hide Plaintext
               </button>
             ` : `
               <button onclick="openDecryptModal(${n.id})" class="w-full text-xs py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20">
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
-                Открыть / Расшифровать
+                Unlock / Decrypt Note
               </button>
             `}
           </div>
@@ -801,11 +801,11 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
       if (data.success) {
         document.getElementById('out-sha256').textContent = data.data.sha256_hex;
         document.getElementById('out-sig').value = data.data.signature_hex;
-        document.getElementById('asym-status').innerText = 'Подписано (Ed25519)';
+        document.getElementById('asym-status').innerText = 'Signed (Ed25519)';
         document.getElementById('asym-status').className = 'text-xs px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-mono border border-blue-200 font-semibold';
         hideAlert('asym-verify-alert');
       } else {
-        alert("Ошибка подписания: " + data.error);
+        alert("Signing error: " + data.error);
       }
     }
 
@@ -819,7 +819,7 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
 
       if (!sig) {
         alertBox.className = 'p-3.5 rounded-xl border border-amber-200 bg-amber-50 text-amber-900 text-xs shadow-sm';
-        alertBox.innerHTML = `<strong>⚠️ ПОДПИСЬ ОТСУТСТВУЕТ!</strong><br>Сначала нажмите «Подписать документ (Ed25519)» или вставьте 64-байтную подпись в поле.`;
+        alertBox.innerHTML = `<strong>SIGNATURE REQUIRED!</strong><br>Click "Sign Document (Ed25519)" or paste a 64-byte signature into the field.`;
         return;
       }
 
@@ -835,17 +835,16 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
 
         if (data.success && data.data.is_valid) {
           alertBox.className = 'p-3.5 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 text-xs shadow-sm';
-          alertBox.innerHTML = `<strong>✓ ПОДПИСЬ ПОДЛИННАЯ!</strong><br>Документ оригинальный, автор подтвержден открытым ключом Ed25519, изменений нет. Хеш SHA-256: <code>${data.data.sha256_hex}</code>`;
+          alertBox.innerHTML = `<strong>[VALID SIGNATURE]</strong><br>Document is authentic and verified with author public key. No tampering detected. SHA-256 Digest: <code>${data.data.sha256_hex}</code>`;
         } else {
           alertBox.className = 'p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 text-xs shadow-sm';
-          alertBox.innerHTML = `<strong>✗ ПОДДЕЛКА ОБНАРУЖЕНА!</strong><br>Текст документа или байты подписи были изменены. Цифровая подпись математически отклонена (InvalidSignature)!`;
+          alertBox.innerHTML = `<strong>[FORGERY DETECTED]</strong><br>Document content or signature bytes have been modified. Digital signature rejected (InvalidSignature)!`;
         }
       } catch (err) {
         alertBox.className = 'p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 text-xs shadow-sm';
-        alertBox.innerHTML = `<strong>✗ ОШИБКА ВАЛИДАЦИИ:</strong><br>${err.message}`;
+        alertBox.innerHTML = `<strong>[VALIDATION ERROR]:</strong><br>${err.message}`;
       }
     }
-
 
     function hideAlert(id) { document.getElementById(id).classList.add('hidden'); }
 
@@ -868,7 +867,7 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
         if (d1.success) {
           encryptedNotes.push({
             id: 1,
-            title: "Учетные записи серверов (Production)",
+            title: "Production Server Access Credentials",
             payload: d1.data,
             full_payload_b64: d1.data.full_payload_b64,
             current_cipher: d1.data.full_payload_b64,
@@ -883,7 +882,7 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            plaintext: "Черновик исследования: Анализ аутентифицированного шифрования AEAD (AES-256-GCM) и цифровых подписей Ed25519.",
+            plaintext: "Research Abstract: Practical evaluation of Authenticated Encryption (AES-256-GCM) and Edwards-curve Digital Signatures (Ed25519).",
             password: "SuperCryptoKey2026!#",
             associated_data: "dept=cybersecurity;lab=5"
           })
@@ -892,7 +891,7 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
         if (d2.success) {
           encryptedNotes.push({
             id: 2,
-            title: "Тезисы исследовательской работы",
+            title: "Cryptographic Research Abstract",
             payload: d2.data,
             full_payload_b64: d2.data.full_payload_b64,
             current_cipher: d2.data.full_payload_b64,

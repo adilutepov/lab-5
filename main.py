@@ -145,7 +145,7 @@ async def api_symmetric_decrypt_payload(payload: SymmetricDecryptPayloadRequest)
             status_code=400,
             content={
                 "success": False,
-                "error": "✗ Ошибка целостности (InvalidTag): Неверный пароль или данные были изменены! AES-GCM заблокировал расшифровку."
+                "error": "Integrity Failure (InvalidTag): Invalid password or corrupted payload! AES-GCM authentication tag mismatch."
             }
         )
     except Exception as e:
