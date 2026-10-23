@@ -217,7 +217,7 @@ async def api_update_demo_profile(payload: DemoProfileUpdateRequest, response: R
 
 @app.get("/login")
 async def login():
-    if auth_service.AUTH_MODE == "keycloak_lab6":
+    if auth_service.get_auth_mode() == "keycloak_lab6":
         return RedirectResponse(auth_service.get_keycloak_login_url())
     return RedirectResponse("/?info=demo_mode_active")
 
