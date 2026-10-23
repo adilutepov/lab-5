@@ -249,21 +249,17 @@
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Текст официального документа / отчета</label>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Текст официального документа (можно свободно изменять вручную)</label>
             <textarea id="asym-doc" rows="5" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition" placeholder="Введите текст документа...">ПРИКАЗ О ПОДТВЕРЖДЕНИИ РЕЗУЛЬТАТОВ:
 Студент: Исследователь Алихан
 Тема: Применение современных криптографических механизмов (Лаб 5)
 Оценка: Отлично (Подтверждено кафедрой информационной безопасности)</textarea>
           </div>
 
-          <div class="flex flex-wrap gap-2 pt-1">
-            <button onclick="signDocument()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-blue-600/20">
+          <div class="pt-1">
+            <button onclick="signDocument()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-blue-600/20">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
               Подписать документ (Ed25519)
-            </button>
-            <button onclick="tamperDocument()" id="btn-tamper-doc" disabled class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 disabled:opacity-40 disabled:cursor-not-allowed font-semibold py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1.5 text-xs">
-              <svg class="w-4 h-4 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-              Изменить 1 символ (Подделка)
             </button>
           </div>
 
@@ -286,14 +282,15 @@
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Цифровая подпись документа (64 байта):</label>
-            <div id="out-sig" class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-emerald-800 font-mono text-xs font-semibold break-all select-all max-h-24 overflow-y-auto">
-              Нажмите «Подписать документ», чтобы сформировать цифровую подпись...
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Цифровая подпись документа (64 байта):</label>
+              <span class="text-[10px] text-slate-400 font-mono">Можно редактировать вручную</span>
             </div>
+            <textarea id="out-sig" rows="3" class="w-full p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-emerald-800 font-mono text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none transition resize-y select-all" placeholder="Нажмите «Подписать документ» или введите/измените подпись вручную..."></textarea>
           </div>
 
           <div class="pt-1">
-            <button onclick="verifySignature()" id="btn-verify" disabled class="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20">
+            <button onclick="verifySignature()" id="btn-verify" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
               Проверить подлинность подписи
             </button>
@@ -305,17 +302,30 @@
           <!-- Collapsible Technical Details (For Professor / Report) -->
           <details class="mt-3 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs">
             <summary class="font-semibold text-slate-700 cursor-pointer flex items-center justify-between">
-              <span>🔍 Технические детали для отчета (SHA-256, Ключи Ed25519)</span>
+              <span>🔍 Технические детали для отчета (Ключи Ed25519, SHA-256)</span>
               <span class="text-[10px] text-slate-400">Нажмите, чтобы развернуть</span>
             </summary>
-            <div class="space-y-2 mt-3 pt-3 border-t border-slate-200 font-mono text-[11px]">
+            <div class="space-y-3 mt-3 pt-3 border-t border-slate-200 font-mono text-[11px]">
               <div>
-                <span class="text-slate-500 block font-sans font-medium">Отпечаток документа (SHA-256):</span>
-                <div id="out-sha256" class="p-1.5 rounded bg-white border border-slate-200 text-slate-700 break-all select-all">None</div>
+                <span class="text-rose-600 block font-sans font-medium flex items-center gap-1 mb-1">
+                  <span>🔑</span> Закрытый секретный ключ автора (Ed25519 Private Key):
+                </span>
+                <div id="disp-privkey" class="p-2 rounded bg-white border border-rose-200 text-rose-900 break-all select-all max-h-24 overflow-y-auto text-[10px]">Генерируется...</div>
+                <span class="text-[10px] text-slate-400 font-sans mt-0.5 block">Секретный ключ, которым директор/автор подписывает документ (хранится в тайне)</span>
               </div>
               <div>
-                <span class="text-slate-500 block font-sans font-medium">Открытый ключ автора (Ed25519 Public Key):</span>
-                <div id="disp-pubkey" class="p-1.5 rounded bg-white border border-slate-200 text-blue-800 break-all select-all max-h-16 overflow-y-auto">Сгенерируется при подписании</div>
+                <span class="text-blue-600 block font-sans font-medium flex items-center gap-1 mb-1">
+                  <span>🌐</span> Открытый публичный ключ автора (Ed25519 Public Key):
+                </span>
+                <div id="disp-pubkey" class="p-2 rounded bg-white border border-blue-200 text-blue-900 break-all select-all max-h-24 overflow-y-auto text-[10px]">Генерируется...</div>
+                <span class="text-[10px] text-slate-400 font-sans mt-0.5 block">Публичный ключ, доступный любому проверяющему для валидации подлинности</span>
+              </div>
+              <div>
+                <span class="text-slate-600 block font-sans font-medium flex items-center gap-1 mb-1">
+                  <span>#️⃣</span> Отпечаток документа (SHA-256 хеш):
+                </span>
+                <div id="out-sha256" class="p-2 rounded bg-white border border-slate-200 text-slate-800 break-all select-all text-[11px] font-semibold">Сгенерируется при подписании</div>
+                <span class="text-[10px] text-slate-400 font-sans mt-0.5 block">Фиксированный 32-байтный отпечаток текста. Если изменить хоть букву в документе — этот хеш изменится</span>
               </div>
             </div>
           </details>
@@ -760,7 +770,6 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
 
     // Module 2: Asymmetric Cryptography & Digital Signature
     let lastAsymKeypair = null;
-    let lastSignature = null;
 
     async function generateKeys() {
       const resp = await fetch('/api/asymmetric/generate-keys', { method: 'POST' });
@@ -769,8 +778,10 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
         lastAsymKeypair = data.data;
         document.getElementById('asym-privkey').value = data.data.private_key_pem;
         document.getElementById('asym-pubkey').value = data.data.public_key_pem;
-        const disp = document.getElementById('disp-pubkey');
-        if (disp) disp.textContent = data.data.public_key_pem;
+        const dispPub = document.getElementById('disp-pubkey');
+        if (dispPub) dispPub.textContent = data.data.public_key_pem;
+        const dispPriv = document.getElementById('disp-privkey');
+        if (dispPriv) dispPriv.textContent = data.data.private_key_pem;
       }
     }
 
@@ -788,13 +799,10 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
       });
       const data = await resp.json();
       if (data.success) {
-        lastSignature = data.data.signature_hex;
         document.getElementById('out-sha256').textContent = data.data.sha256_hex;
-        document.getElementById('out-sig').textContent = data.data.signature_hex;
+        document.getElementById('out-sig').value = data.data.signature_hex;
         document.getElementById('asym-status').innerText = 'Подписано (Ed25519)';
         document.getElementById('asym-status').className = 'text-xs px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-mono border border-blue-200 font-semibold';
-        document.getElementById('btn-tamper-doc').disabled = false;
-        document.getElementById('btn-verify').disabled = false;
         hideAlert('asym-verify-alert');
       } else {
         alert("Ошибка подписания: " + data.error);
@@ -803,42 +811,38 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
 
     async function verifySignature() {
       const doc = document.getElementById('asym-doc').value;
-      const sig = lastSignature || document.getElementById('out-sig').textContent.trim();
-      const pubKey = (lastAsymKeypair ? lastAsymKeypair.public_key_pem : "") || document.getElementById('asym-pubkey').value;
+      const sigInput = document.getElementById('out-sig');
+      const sig = sigInput ? sigInput.value.trim() : "";
       
-      const resp = await fetch('/api/asymmetric/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ document_text: doc, signature_hex: sig, public_key_pem: pubKey })
-      });
-      const data = await resp.json();
       const alertBox = document.getElementById('asym-verify-alert');
       alertBox.classList.remove('hidden');
 
-      if (data.success && data.data.is_valid) {
-        alertBox.className = 'p-3.5 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 text-xs shadow-sm';
-        alertBox.innerHTML = `<strong>✓ ПОДПИСЬ ПОДЛИННАЯ!</strong><br>Документ оригинальный, автор подтвержден открытым ключом Ed25519, изменений нет.`;
-      } else {
-        alertBox.className = 'p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 text-xs shadow-sm';
-        alertBox.innerHTML = `<strong>✗ ПОДДЕЛКА ОБНАРУЖЕНА!</strong><br>Текст документа был изменен после подписания. Цифровая подпись отклонена (InvalidSignature)!`;
+      if (!sig) {
+        alertBox.className = 'p-3.5 rounded-xl border border-amber-200 bg-amber-50 text-amber-900 text-xs shadow-sm';
+        alertBox.innerHTML = `<strong>⚠️ ПОДПИСЬ ОТСУТСТВУЕТ!</strong><br>Сначала нажмите «Подписать документ (Ed25519)» или вставьте 64-байтную подпись в поле.`;
+        return;
       }
-    }
 
-    async function tamperDocument() {
-      const doc = document.getElementById('asym-doc').value;
-      const resp = await fetch('/api/asymmetric/tamper', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ document_text: doc })
-      });
-      const data = await resp.json();
-      if (data.success) {
-        document.getElementById('asym-doc').value = data.tampered_text || data.tampered_document_text;
-        document.getElementById('asym-status').innerText = 'ТЕКСТ ИЗМЕНЕН!';
-        document.getElementById('asym-status').className = 'text-xs px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 font-mono border border-rose-200 font-semibold';
-        
-        // Auto verify to demonstrate rejection
-        verifySignature();
+      const pubKey = (lastAsymKeypair ? lastAsymKeypair.public_key_pem : "") || document.getElementById('asym-pubkey').value;
+      
+      try {
+        const resp = await fetch('/api/asymmetric/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ document_text: doc, signature_hex: sig, public_key_pem: pubKey })
+        });
+        const data = await resp.json();
+
+        if (data.success && data.data.is_valid) {
+          alertBox.className = 'p-3.5 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 text-xs shadow-sm';
+          alertBox.innerHTML = `<strong>✓ ПОДПИСЬ ПОДЛИННАЯ!</strong><br>Документ оригинальный, автор подтвержден открытым ключом Ed25519, изменений нет. Хеш SHA-256: <code>${data.data.sha256_hex}</code>`;
+        } else {
+          alertBox.className = 'p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 text-xs shadow-sm';
+          alertBox.innerHTML = `<strong>✗ ПОДДЕЛКА ОБНАРУЖЕНА!</strong><br>Текст документа или байты подписи были изменены. Цифровая подпись математически отклонена (InvalidSignature)!`;
+        }
+      } catch (err) {
+        alertBox.className = 'p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-900 text-xs shadow-sm';
+        alertBox.innerHTML = `<strong>✗ ОШИБКА ВАЛИДАЦИИ:</strong><br>${err.message}`;
       }
     }
 
