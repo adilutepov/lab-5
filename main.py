@@ -37,6 +37,11 @@ class SymmetricDecryptRequest(BaseModel):
     password: str
     associated_data: Optional[str] = ""
 
+class SymmetricDecryptPayloadRequest(BaseModel):
+    full_payload_b64: str
+    password: str
+    associated_data: Optional[str] = ""
+
 class SymmetricTamperRequest(BaseModel):
     ciphertext_hex: str
 
@@ -117,6 +122,30 @@ async def api_symmetric_decrypt(payload: SymmetricDecryptRequest):
                 "error": "CRITICAL INTEGRITY FAILURE (InvalidTag Exception): "
                          "The ciphertext or authentication tag has been tampered with, "
                          "or an invalid master password was provided! AES-GCM guarantees data integrity."
+            }
+        )
+    except Exception as e:
+        return JSONResponse(status_code=400, content={"success": False, "error": str(e)})
+
+@app.post("/api/symmetric/decrypt-payload")
+async def api_symmetric_decrypt_payload(payload: SymmetricDecryptPayloadRequest):
+    try:
+        decrypted_text = crypto_service.decrypt_payload_b64(
+            full_payload_b64=payload.full_payload_b64,
+            password=payload.password,
+            associated_data=payload.associated_data or ""
+        )
+        return {
+            "success": True,
+            "decrypted_text": decrypted_text,
+            "integrity_verified": True
+        }
+    except InvalidTag:
+        return JSONResponse(
+            status_code=400,
+            content={
+                "success": False,
+                "error": "✗ Ошибка целостности (InvalidTag): Неверный пароль или данные были изменены! AES-GCM заблокировал расшифровку."
             }
         )
     except Exception as e:

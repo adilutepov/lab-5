@@ -90,6 +90,30 @@ def decrypt_aes_gcm(
     decrypted_bytes = aesgcm.decrypt(nonce, ct_with_tag, aad_bytes)
     return decrypted_bytes.decode("utf-8")
 
+def decrypt_payload_b64(full_payload_b64: str, password: str, associated_data: str = "") -> str:
+    """
+    Decrypts a unified Base64 payload containing (salt + nonce + ciphertext + tag).
+    Allows direct in-place decryption and natural manual tampering testing.
+    """
+    try:
+        raw_payload = base64.b64decode(full_payload_b64.strip().encode("ascii"))
+    except Exception as e:
+        raise ValueError(f"Invalid Base64 payload format: {e}")
+        
+    if len(raw_payload) < 44:  # 16 salt + 12 nonce + 16 tag
+        raise ValueError("Payload length is too short to be a valid AES-GCM package.")
+        
+    salt = raw_payload[:16]
+    nonce = raw_payload[16:28]
+    ct_with_tag = raw_payload[28:]
+    
+    key = derive_key_pbkdf2(password, salt)
+    aesgcm = AESGCM(key)
+    aad_bytes = associated_data.encode("utf-8") if associated_data else None
+    
+    decrypted_bytes = aesgcm.decrypt(nonce, ct_with_tag, aad_bytes)
+    return decrypted_bytes.decode("utf-8")
+
 def tamper_ciphertext(ciphertext_hex: str) -> str:
     """
     Simulates a bit-flipping / active tampering attack by altering one byte of the ciphertext.

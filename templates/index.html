@@ -147,9 +147,9 @@
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Мастер-пароль для шифрования</label>
-            <input type="password" id="sym-password" value="SuperCryptoKey2026!#" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
-            <span class="text-[11px] text-slate-400 mt-1 block">Ключ формируется через PBKDF2 (соль + 200 000 итераций)</span>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Пароль для этой новой заметки</label>
+            <input type="password" id="sym-password" value="SuperCryptoKey2026!#" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="Придумайте пароль...">
+            <span class="text-[11px] text-slate-400 mt-1 block">Ключ генерируется через PBKDF2 (соль + 200 000 итераций)</span>
           </div>
 
           <div class="hidden">
@@ -464,6 +464,35 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
   </div>
 
   <!-- ========================================================================= -->
+  <!-- Note Decryption Password Modal (Separate per-note password input) -->
+  <!-- ========================================================================= -->
+  <div id="decrypt-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+    <div class="bg-white max-w-sm w-full p-6 rounded-2xl border border-slate-200 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+        <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+          <span>🔒</span> Введите пароль заметки
+        </h3>
+        <button onclick="closeDecryptModal()" class="text-slate-400 hover:text-slate-700 text-lg font-bold">&times;</button>
+      </div>
+
+      <div>
+        <p class="text-xs text-slate-500 mb-1">Заметка:</p>
+        <span id="decrypt-modal-note-title" class="text-xs font-bold text-indigo-700 block mb-3 break-words bg-indigo-50 p-2 rounded-lg border border-indigo-100"></span>
+        
+        <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1">Пароль для расшифровки</label>
+        <input type="password" id="decrypt-modal-password" onkeydown="if(event.key==='Enter') submitDecryptModal()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition" placeholder="Введите пароль заметки...">
+      </div>
+
+      <div id="decrypt-modal-error" class="hidden p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium"></div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+        <button onclick="closeDecryptModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">Отмена</button>
+        <button onclick="submitDecryptModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-sm shadow-emerald-600/20">Расшифровать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
   <!-- JavaScript Logic -->
   <!-- ========================================================================= -->
   <script>
@@ -533,9 +562,10 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
           title: title,
           payload: data.data,
           full_payload_b64: data.data.full_payload_b64,
+          current_cipher: data.data.full_payload_b64,
+          unlocked: false,
           decryptedText: null,
           error: null,
-          tampered: false,
           createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         };
         encryptedNotes.unshift(newNote);
@@ -548,62 +578,100 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
       }
     }
 
-    async function openNote(id) {
+    function escapeHtml(text) {
+      if (!text) return '';
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    let activeDecryptNoteId = null;
+
+    function openDecryptModal(id) {
       const note = encryptedNotes.find(n => n.id === id);
       if (!note) return;
-      
-      const passwordInput = document.getElementById('sym-password').value;
-      const pass = passwordInput || prompt("Введите мастер-пароль для расшифровки этой заметки:");
-      if (!pass) return;
+      activeDecryptNoteId = id;
+      document.getElementById('decrypt-modal-note-title').textContent = note.title;
+      const pwdInput = document.getElementById('decrypt-modal-password');
+      pwdInput.value = '';
+      document.getElementById('decrypt-modal-error').classList.add('hidden');
+      document.getElementById('decrypt-modal-error').textContent = '';
+      document.getElementById('decrypt-modal').classList.remove('hidden');
+      setTimeout(() => pwdInput.focus(), 50);
+    }
+
+    function closeDecryptModal() {
+      activeDecryptNoteId = null;
+      document.getElementById('decrypt-modal').classList.add('hidden');
+    }
+
+    async function submitDecryptModal() {
+      if (!activeDecryptNoteId) return;
+      const note = encryptedNotes.find(n => n.id === activeDecryptNoteId);
+      if (!note) return;
+
+      const password = document.getElementById('decrypt-modal-password').value;
+      if (!password) {
+        showDecryptModalError("Введите пароль заметки!");
+        return;
+      }
 
       const aadEl = document.getElementById('sym-aad');
       const aad = aadEl ? aadEl.value : "";
+      const cipherToDecrypt = note.current_cipher || note.full_payload_b64;
 
-      const resp = await fetch('/api/symmetric/decrypt', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ciphertext_hex: note.payload.ciphertext_hex,
-          tag_hex: note.payload.tag_hex,
-          nonce_hex: note.payload.nonce_hex,
-          salt_hex: note.payload.salt_hex,
-          password: pass,
-          associated_data: aad
-        })
-      });
-      const res = await resp.json();
-      inspectNote(id);
+      try {
+        const resp = await fetch('/api/symmetric/decrypt-payload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            full_payload_b64: cipherToDecrypt,
+            password: password,
+            associated_data: aad
+          })
+        });
+        const data = await resp.json();
 
-      if (res.success) {
-        note.decryptedText = res.decrypted_text;
-        note.error = null;
-      } else {
-        note.decryptedText = null;
-        note.error = "✗ Нарушение целостности! Данные были повреждены или неверный пароль (InvalidTag).";
+        if (data.success) {
+          note.unlocked = true;
+          note.decryptedText = data.decrypted_text;
+          note.error = null;
+          closeDecryptModal();
+          renderNotes();
+        } else {
+          const errMsg = data.error || "Неверный пароль или данные были повреждены!";
+          showDecryptModalError(errMsg);
+          note.error = errMsg;
+          renderNotes();
+        }
+      } catch (err) {
+        showDecryptModalError("Сетевая ошибка: " + err.message);
       }
+    }
+
+    function showDecryptModalError(msg) {
+      const errBox = document.getElementById('decrypt-modal-error');
+      errBox.textContent = msg;
+      errBox.classList.remove('hidden');
+    }
+
+    function lockNote(id) {
+      const note = encryptedNotes.find(n => n.id === id);
+      if (!note) return;
+      note.unlocked = false;
+      note.decryptedText = null;
+      note.error = null;
       renderNotes();
     }
 
-    async function tamperNote(id) {
+    function updateNoteCipher(id, val) {
       const note = encryptedNotes.find(n => n.id === id);
-      if (!note) return;
-
-      const resp = await fetch('/api/symmetric/tamper', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ciphertext_hex: note.payload.ciphertext_hex })
-      });
-      const data = await resp.json();
-      if (data.success) {
-        note.payload.ciphertext_hex = data.tampered_ciphertext_hex;
-        note.tampered = true;
-        note.decryptedText = null;
-        note.error = "✗ Заметка повреждена хакером (1 байт изменен)! Попробуйте ее открыть.";
-        inspectNote(id);
-        renderNotes();
-        
-        // Auto attempt to open to demonstrate immediate failure
-        openNote(id);
+      if (note) {
+        note.current_cipher = val;
+        note.error = null;
       }
     }
 
@@ -638,47 +706,52 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
       }
 
       container.innerHTML = encryptedNotes.map(n => `
-        <div class="p-3.5 rounded-xl border ${n.tampered ? 'border-rose-200 bg-rose-50/50' : 'border-slate-200 bg-slate-50/70'} space-y-2.5 transition">
+        <div class="p-3.5 rounded-xl border ${n.error ? 'border-rose-300 bg-rose-50/40' : (n.unlocked ? 'border-emerald-300 bg-emerald-50/30' : 'border-slate-200 bg-slate-50/70')} space-y-2.5 transition">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-              ${n.tampered ? '<span class="text-rose-500">⚠️</span>' : '<span class="text-indigo-600">🔒</span>'}
-              ${n.title}
+              ${n.unlocked ? '<span class="text-emerald-600">🔓</span>' : '<span class="text-indigo-600">🔒</span>'}
+              ${escapeHtml(n.title)}
             </span>
             <div class="flex items-center gap-2">
               <span class="text-[10px] text-slate-400 font-mono">${n.createdAt}</span>
-              <button onclick="deleteNote(${n.id})" class="text-slate-300 hover:text-rose-600 text-xs font-bold transition">&times;</button>
+              <button onclick="deleteNote(${n.id})" title="Удалить заметку" class="text-slate-300 hover:text-rose-600 text-xs font-bold transition">&times;</button>
             </div>
           </div>
 
-          <!-- Ciphertext preview -->
-          <div class="text-[11px] font-mono p-2 rounded-lg bg-white border border-slate-200/80 text-indigo-900/80 break-all select-all max-h-14 overflow-y-auto">
-            ${n.full_payload_b64}
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="flex items-center gap-2 pt-1">
-            <button onclick="openNote(${n.id})" class="flex-1 text-xs py-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition flex items-center justify-center gap-1 shadow-sm shadow-emerald-600/20">
-              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
-              ${n.decryptedText ? 'Скрыть текст' : 'Открыть / Расшифровать'}
-            </button>
-            <button onclick="tamperNote(${n.id})" class="text-xs py-1.5 px-2.5 rounded-lg bg-white border border-rose-200 hover:bg-rose-50 text-rose-700 font-semibold transition flex items-center gap-1 shadow-sm">
-              <svg class="w-3.5 h-3.5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-              Сломать байт
-            </button>
-          </div>
-
-          <!-- Decrypted text result -->
-          ${n.decryptedText ? `
-            <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-xs text-emerald-950 font-medium">
-              <span class="text-[10px] text-emerald-700 font-bold uppercase tracking-wider block mb-0.5">✓ Расшифрованное содержимое:</span>
-              ${n.decryptedText}
+          <!-- Single In-Place Textarea (Shows Ciphertext or Plaintext directly in this same box) -->
+          <div class="space-y-1">
+            <div class="flex items-center justify-between text-[11px] text-slate-500 font-medium">
+              <span>${n.unlocked ? '📄 Исходный текст заметки:' : '🔐 Зашифрованный блок (можно изменять текст вручную):'}</span>
+              <span class="text-[10px] text-slate-400 font-mono">${n.unlocked ? 'Расшифровано' : 'Base64 GCM'}</span>
             </div>
-          ` : ''}
+            <textarea
+              id="note-text-${n.id}"
+              rows="3"
+              ${n.unlocked ? 'readonly' : ''}
+              oninput="updateNoteCipher(${n.id}, this.value)"
+              class="w-full text-xs font-mono p-2.5 rounded-xl border ${n.unlocked ? 'bg-emerald-50/80 border-emerald-300 text-emerald-950 font-sans font-medium' : 'bg-white border-slate-200 text-indigo-900 focus:ring-2 focus:ring-indigo-400'} focus:outline-none transition resize-y select-all"
+              placeholder="Зашифрованная строка...">${escapeHtml(n.unlocked ? n.decryptedText : (n.current_cipher || n.full_payload_b64))}</textarea>
+          </div>
 
-          <!-- Tamper / Error Alert -->
+          <!-- Action Button: Opens Password Modal or Locks back -->
+          <div class="pt-0.5">
+            ${n.unlocked ? `
+              <button onclick="lockNote(${n.id})" class="w-full text-xs py-2 px-3 rounded-xl bg-slate-700 hover:bg-slate-800 text-white font-semibold transition flex items-center justify-center gap-1.5 shadow-sm">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                Заблокировать / Скрыть текст
+              </button>
+            ` : `
+              <button onclick="openDecryptModal(${n.id})" class="w-full text-xs py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+                Открыть / Расшифровать
+              </button>
+            `}
+          </div>
+
+          <!-- Error Alert if decryption failed or tampering broke tag -->
           ${n.error ? `
-            <div class="p-2.5 bg-rose-50 border border-rose-200 rounded-lg text-xs text-rose-900 font-medium">
-              ${n.error}
+            <div class="p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-900 font-medium">
+              ${escapeHtml(n.error)}
             </div>
           ` : ''}
         </div>
@@ -794,9 +867,10 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
             title: "Учетные записи серверов (Production)",
             payload: d1.data,
             full_payload_b64: d1.data.full_payload_b64,
+            current_cipher: d1.data.full_payload_b64,
+            unlocked: false,
             decryptedText: null,
             error: null,
-            tampered: false,
             createdAt: "10:15"
           });
         }
@@ -817,9 +891,10 @@ gpg: Good signature from "Lab Tester &lt;tester@crypto.edu&gt;" [ultimate]</span
             title: "Тезисы исследовательской работы",
             payload: d2.data,
             full_payload_b64: d2.data.full_payload_b64,
+            current_cipher: d2.data.full_payload_b64,
+            unlocked: false,
             decryptedText: null,
             error: null,
-            tampered: false,
             createdAt: "10:45"
           });
         }
