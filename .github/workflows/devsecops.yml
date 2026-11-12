@@ -1,0 +1,70 @@
+name: Lab 10 — DevSecOps CI Pipeline & Secret Management
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  devsecops-pipeline:
+    name: Build, SAST (x2), SCA & Secret Provisioning
+    runs-on: ubuntu-latest
+
+    env:
+      APP_ENV: "ci-staging"
+      LAB10_SECRET_KEY: ${{ secrets.LAB10_SECRET_KEY || 'ci_ephemeral_secret_key_99a8b7c6d5e4' }}
+      LAB10_KEYCLOAK_CLIENT_SECRET: ${{ secrets.LAB10_KEYCLOAK_CLIENT_SECRET || 'ci_kc_client_secret_77f6e5d4' }}
+
+    steps:
+      - name: 1. Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 2. Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: 3. Build Application & Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install bandit ruff pip-audit
+          mkdir -p artifacts
+          python -m py_compile main.py auth_service.py crypto_service.py secret_manager.py
+          echo "Build verification succeeded: all modules compiled cleanly."
+
+      - name: 4. Run SAST Tool #1 — Bandit Security Scanner
+        run: |
+          bandit -r auth_service.py crypto_service.py main.py secret_manager.py -f txt || true
+          bandit -r auth_service.py crypto_service.py main.py secret_manager.py -f json -o artifacts/bandit-report.json || true
+
+      - name: 5. Run SAST Tool #2 — Ruff Security Linter (Flake8-Bandit Rules)
+        run: |
+          ruff check --select S,B,E,F auth_service.py crypto_service.py main.py secret_manager.py || true
+          ruff check --select S,B,E,F auth_service.py crypto_service.py main.py secret_manager.py --output-format json > artifacts/ruff-sast-report.json || true
+
+      - name: 6. Run SCA Tool #1 — pip-audit Dependency Vulnerability Scanner
+        run: |
+          pip-audit -r requirements.txt || true
+          pip-audit -r requirements.txt -f json -o artifacts/pip-audit-report.json || true
+
+      - name: 7. Verify Secret Provisioning (ENV, File, Decentralized SealedSecret & Centralized Vault)
+        run: |
+          python secret_manager.py
+          cp secrets.sealed.json artifacts/secrets.sealed.json
+
+      - name: 8. Export Security Reports & Secret Audit Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: devsecops-security-reports
+          path: |
+            artifacts/bandit-report.json
+            artifacts/ruff-sast-report.json
+            artifacts/pip-audit-report.json
+            artifacts/secret-provisioning-audit.json
+            artifacts/secrets.sealed.json
+          retention-days: 30

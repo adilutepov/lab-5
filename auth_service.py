@@ -10,13 +10,30 @@ def get_auth_mode() -> str:
     load_dotenv(override=True)
     return os.getenv("AUTH_MODE", "keycloak_lab6")
 
+def get_external_secret(key_name: str, default: str = "") -> str:
+    """Retrieves application secrets from external storage (ENV or mounted secret file — Lab #10)."""
+    load_dotenv(override=True)
+    env_val = os.getenv(key_name) or os.getenv(f"LAB10_{key_name}")
+    if env_val:
+        return env_val
+    secret_file = os.getenv("SECRET_FILE_PATH", os.path.join(os.path.dirname(__file__), "artifacts", "mounted_secrets.json"))
+    if os.path.exists(secret_file):
+        try:
+            with open(secret_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if key_name in data:
+                    return str(data[key_name])
+        except OSError:
+            pass
+    return default
+
 def get_keycloak_config() -> Dict[str, str]:
     load_dotenv(override=True)
     return {
         "server_url": os.getenv("KEYCLOAK_SERVER_URL", "http://localhost:8080").rstrip("/"),
         "realm": os.getenv("KEYCLOAK_REALM", "master"),
         "client_id": os.getenv("KEYCLOAK_CLIENT_ID", "crypto-portal"),
-        "client_secret": os.getenv("KEYCLOAK_CLIENT_SECRET", ""),
+        "client_secret": get_external_secret("KEYCLOAK_CLIENT_SECRET", ""),
         "redirect_uri": os.getenv("KEYCLOAK_REDIRECT_URI", "http://localhost:8000/callback"),
         "scope": os.getenv("KEYCLOAK_SCOPE", "openid profile email"),
     }
@@ -32,7 +49,7 @@ def __getattr__(name: str):
         "KEYCLOAK_CLIENT_SECRET": cfg["client_secret"],
         "KEYCLOAK_REDIRECT_URI": cfg["redirect_uri"],
         "KEYCLOAK_SCOPE": cfg["scope"],
-        "SECRET_KEY": os.getenv("SECRET_KEY", "dev_secret_key_123"),
+        "SECRET_KEY": get_external_secret("SECRET_KEY", ""),
     }
     if name in mapping:
         return mapping[name]
